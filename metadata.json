@@ -1,0 +1,6 @@
+{
+  "name": "The Home Repair Guide",
+  "description": "The 9 things that actually break in an American home — each one from the beginning. Where to shut it off, what the part is called, how to swap it.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
