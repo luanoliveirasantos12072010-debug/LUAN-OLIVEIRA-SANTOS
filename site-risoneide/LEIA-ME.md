@@ -3,17 +3,17 @@
 Site estático (HTML, CSS e JS puros). Abra `index.html` no navegador ou publique
 esta pasta (GitHub Pages, Netlify, Vercel).
 
-## Como editar
-Todo o conteúdo (serviços, preços, avaliações, dúvidas, endereço) fica em `dados.js`.
+- Conteúdo (serviços, preços, avaliações, dúvidas, endereço, WhatsApp): `dados.js`
+- Foto: `img/foto.jpg`
+- Assistente virtual (chat): `assistente.js` no site e `supabase/functions/assistente/index.ts` no servidor
 
-- `whatsapp`: número com DDI e DDD, só números (ex.: `5587999999999`). Os formulários
-  de agendamento enviam a mensagem para esse WhatsApp.
-- A foto fica em `img/foto.jpg`.
+Sem configurar nada, o site já funciona: as avaliações novas ficam salvas no aparelho
+de quem avaliou e o assistente virtual responde com respostas prontas, montadas com
+as informações do site. Os passos abaixo ligam o banco de avaliações e a IA de verdade.
 
-## Avaliações salvas para todos (Supabase, grátis)
-Sem isso, cada avaliação nova fica salva só no aparelho de quem avaliou.
+## Parte 1 — Avaliações salvas para todos (Supabase, grátis)
 
-1. Crie uma conta em https://supabase.com e um projeto novo.
+1. Crie uma conta em https://supabase.com e um projeto novo (anote a senha do banco).
 2. No projeto, abra **SQL Editor**, cole o código abaixo e clique em **Run**:
 
 ```sql
@@ -30,8 +30,31 @@ create policy "todos podem ler" on avaliacoes for select using (true);
 create policy "todos podem avaliar" on avaliacoes for insert with check (true);
 ```
 
-3. Vá em **Project Settings → API** e copie a **Project URL** e a chave **anon public**.
+3. Em **Project Settings → API Keys**, copie a **Project URL** e a chave pública
+   (**publishable**, começa com `sb_publishable_`, ou a antiga **anon public**).
 4. Cole em `dados.js`, nos campos `supabaseUrl` e `supabaseChave`.
 
-Para apagar uma avaliação indesejada: no Supabase, **Table Editor → avaliacoes**,
-selecione a linha e apague.
+Para apagar uma avaliação indesejada: **Table Editor → avaliacoes**, selecione a linha e apague.
+
+## Parte 2 — Assistente virtual com IA (Claude)
+
+O assistente usa o modelo Claude, da Anthropic. Cada conversa tem um custo pequeno
+cobrado na conta da Anthropic.
+
+1. Crie uma conta em https://console.anthropic.com, adicione créditos em **Billing**
+   e, se quiser, defina um limite de gasto mensal em **Limits**.
+2. Em **API Keys**, crie uma chave (começa com `sk-ant-`). Não coloque essa chave no site.
+3. No Supabase, abra **Edge Functions → Secrets** e crie o segredo
+   `ANTHROPIC_API_KEY` com a chave do passo 2.
+4. Em **Edge Functions → Deploy a new function → Via Editor**, dê o nome
+   `assistente`, apague o código de exemplo, cole o conteúdo de
+   `supabase/functions/assistente/index.ts` e clique em **Deploy**.
+5. Nas configurações da função `assistente`, desligue **Enforce JWT verification**
+   (o site chama a função sem login).
+
+Pronto: com `supabaseUrl` e `supabaseChave` preenchidos (Parte 1), o chat passa a usar a IA.
+Se a IA falhar ou ficar sem créditos, o chat volta sozinho para as respostas prontas.
+
+As informações que a IA usa estão no texto `SISTEMA`, dentro de
+`supabase/functions/assistente/index.ts`. Se mudar preços ou endereço em `dados.js`,
+atualize também esse texto e faça o deploy de novo.

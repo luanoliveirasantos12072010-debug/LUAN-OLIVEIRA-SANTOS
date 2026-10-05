@@ -3,6 +3,12 @@
   var D = window.DADOS;
   var $ = function (id) { return document.getElementById(id); };
   var LOCAIS = D.consultorios;
+  // Chaves novas do Supabase ("sb_publishable_...") não são JWT: vão só no cabeçalho apikey.
+  window.SITE_SUPABASE_HEADERS = function () {
+    var h = { apikey: D.supabaseChave, "Content-Type": "application/json" };
+    if (/^eyJ/.test(D.supabaseChave)) h.Authorization = "Bearer " + D.supabaseChave;
+    return h;
+  };
 
   var I = {
     estrela: '<svg viewBox="0 0 24 24"><path d="m12 2 3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.5 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg>',
@@ -272,9 +278,7 @@
   var CHAVE_LOCAL = "avaliacoes-risoneide";
   var usaSupabase = !!(D.supabaseUrl && D.supabaseChave);
   var novas = [];
-  function cabecalhosSupabase() {
-    return { apikey: D.supabaseChave, Authorization: "Bearer " + D.supabaseChave, "Content-Type": "application/json" };
-  }
+  function cabecalhosSupabase() { return window.SITE_SUPABASE_HEADERS(); }
   function carregarNovas() {
     if (usaSupabase) {
       return fetch(D.supabaseUrl.replace(/\/$/, "") + "/rest/v1/avaliacoes?select=autor,nota,servico,texto,created_at&order=created_at.desc&limit=500", { headers: cabecalhosSupabase() })
@@ -496,6 +500,20 @@
   menuBtn.onclick = function () { abrirMenu(true); };
   menu.addEventListener("click", function (e) { if (e.target === menu || e.target.closest("[data-fechar-menu]")) abrirMenu(false); });
 
+  // =================== FICOU COM DÚVIDA? ===================
+  function opcoesDuvida() {
+    return '<button class="opcao" data-acao="assistente"><span class="opcao-icone"><svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><circle cx="8" cy="11" r="1.3" fill="#3d6f63"/><circle cx="12" cy="11" r="1.3" fill="#3d6f63"/><circle cx="16" cy="11" r="1.3" fill="#3d6f63"/></svg></span>' +
+      "<span><strong>Assistente virtual</strong><small>Tire suas dúvidas agora, a qualquer hora, sobre consultas, valores e endereço.</small></span></button>" +
+      (D.whatsapp ? '<a class="opcao opcao-whats" target="_blank" rel="noopener" href="' + linkWhats("Olá, " + D.primeiroNome + "! Vim pelo seu site e fiquei com uma dúvida.") + '"><span class="opcao-icone"><img src="' + esc(D.foto) + '" alt=""></span>' +
+        "<span><strong>Falar com a " + esc(D.primeiroNome) + "</strong><small>Converse comigo diretamente pelo WhatsApp.</small><span class=\"opcao-selo\">" + I.whats + esc(D.telefone) + "</span></span></a>" : "");
+  }
+  $("opcoes-duvida-secao").innerHTML = opcoesDuvida();
+  function folhaDuvida() {
+    abrirFolha("Ficou com alguma dúvida?", '<p class="cinza">Fale com o nosso assistente virtual ou comigo mesma.</p><div class="opcoes-duvida" style="grid-template-columns:1fr">' + opcoesDuvida() + "</div>");
+  }
+
+  window.SITE = { abrirFolha: abrirFolha, fecharFolha: fecharFolha, linkWhats: linkWhats, folhaSolicitar: function () { diaPreferido = ""; folhaSolicitar(); }, toast: toast, esc: esc };
+
   // =================== AÇÕES ===================
   var ACOES = {
     "mais-detalhes": function (b) { folhaMaisDetalhes(!!b.closest("#experiencia")); },
@@ -511,6 +529,8 @@
     "planos": folhaPlanos,
     "privacidade": folhaPrivacidade,
     "enviar-opiniao": folhaAvaliar,
+    "duvida": folhaDuvida,
+    "assistente": function () { fecharFolha(); if (window.abrirAssistente) window.abrirAssistente(); },
     "duvida-mais": function (b) { var rec = $("dq-" + b.dataset.i).classList.toggle("recolhida"); b.textContent = rec ? "mais" : "menos"; },
   };
   document.addEventListener("click", function (e) {

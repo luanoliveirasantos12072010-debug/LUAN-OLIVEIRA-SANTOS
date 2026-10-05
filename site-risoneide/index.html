@@ -50,6 +50,7 @@
     <a href="#opinioes" data-fechar-menu>Avaliações</a>
     <a href="#duvidas" data-fechar-menu>Dúvidas respondidas</a>
     <a href="#faq" data-fechar-menu>Perguntas frequentes</a>
+    <a href="#" data-acao="assistente" data-fechar-menu>Assistente virtual</a>
     <button class="btn btn-verde btn-largo" data-acao="solicitar" data-fechar-menu>Agendar consulta</button>
     <a class="btn btn-whats btn-largo js-whats" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>Chamar no WhatsApp</a>
     <button class="btn btn-bege btn-largo" data-acao="contato" data-fechar-menu>Informações de contato</button>
@@ -243,6 +244,17 @@
         <p class="aviso-conteudo">Os conteúdos publicados neste site têm caráter meramente informativo e não substituem, em nenhuma circunstância, uma consulta com um profissional de saúde.</p>
       </section>
 
+      <section class="card secao duvida-card" id="fale">
+        <div class="duvida-card-topo">
+          <img src="img/foto.jpg" alt="" />
+          <div>
+            <h2>Ficou com alguma dúvida?</h2>
+            <p>Fale com o nosso assistente virtual ou comigo mesma. Vai ser um prazer te ajudar.</p>
+          </div>
+        </div>
+        <div class="opcoes-duvida" id="opcoes-duvida-secao"></div>
+      </section>
+
       <section class="card secao faq" id="faq">
         <h2>Perguntas frequentes</h2>
         <div id="lista-faq"></div>
@@ -290,10 +302,26 @@
 
 <div class="cta-movel" id="cta-movel">
   <div><strong>Risoneide Gomes Xavier</strong><small>Presencial e teleconsulta</small></div>
-  <div class="cta-botoes"><a class="btn btn-whats btn-icone js-whats" href="#" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a><button class="btn btn-verde" data-acao="solicitar">Agendar consulta</button></div>
+  <div class="cta-botoes"><button class="btn btn-bege btn-icone" data-acao="duvida" aria-label="Ficou com alguma dúvida?"><svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><circle cx="8" cy="11" r="1.3" fill="#fff"/><circle cx="12" cy="11" r="1.3" fill="#fff"/><circle cx="16" cy="11" r="1.3" fill="#fff"/></svg></button><a class="btn btn-whats btn-icone js-whats" href="#" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a><button class="btn btn-verde" data-acao="solicitar">Agendar consulta</button></div>
 </div>
 
-<a class="whats-flutuante js-whats" href="#" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg><span>Fale comigo</span></a>
+<button class="duvida-flutuante" data-acao="duvida" aria-label="Ficou com alguma dúvida?"><svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><circle cx="8" cy="11" r="1.3" fill="#fff"/><circle cx="12" cy="11" r="1.3" fill="#fff"/><circle cx="16" cy="11" r="1.3" fill="#fff"/></svg><span>Ficou com dúvida?</span></button>
+
+<section class="chat" id="chat" hidden aria-label="Assistente virtual">
+  <header class="chat-cab">
+    <span class="chat-avatar"><svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><circle cx="8" cy="11" r="1.3" fill="#fff"/><circle cx="12" cy="11" r="1.3" fill="#fff"/><circle cx="16" cy="11" r="1.3" fill="#fff"/></svg></span>
+    <div><strong>Assistente virtual</strong><small id="chat-status">da psicóloga Risoneide · responde na hora</small></div>
+    <a class="chat-whats js-whats" href="#" target="_blank" rel="noopener" aria-label="Falar com a Risoneide no WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
+    <button class="chat-fechar" id="chat-fechar" aria-label="Fechar assistente">×</button>
+  </header>
+  <div class="chat-msgs" id="chat-msgs" aria-live="polite"></div>
+  <div class="chat-sugestoes" id="chat-sugestoes"></div>
+  <form class="chat-form" id="chat-form" autocomplete="off">
+    <textarea id="chat-input" rows="1" maxlength="600" placeholder="Escreva sua dúvida..." aria-label="Sua dúvida"></textarea>
+    <button type="submit" id="chat-enviar" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="M3 20.5 21 12 3 3.5l.01 6.6L15 12 3.01 13.9z"/></svg></button>
+  </form>
+  <p class="chat-aviso">Assistente com inteligência artificial. Não substitui atendimento psicológico. Em crise, ligue <a href="tel:188">188 (CVV)</a>.</p>
+</section>
 
 <div class="folha-fundo" id="folha" hidden>
   <div class="folha" role="dialog" aria-modal="true" aria-labelledby="folha-titulo">
@@ -314,5 +342,6 @@
 
 <script src="dados.js"></script>
 <script src="app.js"></script>
+<script src="assistente.js"></script>
 </body>
 </html>
