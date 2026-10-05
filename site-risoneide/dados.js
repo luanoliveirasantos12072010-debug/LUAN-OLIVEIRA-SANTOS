@@ -12,9 +12,9 @@ window.DADOS = {
 
   // PREENCHER: só números, com DDI e DDD. Ex.: "5587999999999".
   // Os formulários enviam a mensagem para este WhatsApp.
-  whatsapp: "",
+  whatsapp: "558791542626",
   // PREENCHER (opcional): telefone para exibir e e-mail de contato.
-  telefone: "",
+  telefone: "(87) 9154-2626",
   email: "",
 
   nota: 5,

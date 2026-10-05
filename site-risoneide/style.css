@@ -157,6 +157,25 @@ h3 { font-size: 13px; font-weight: 700; margin: 20px 0 8px; text-transform: uppe
 .btn-bege { background: var(--bege); color: var(--texto); }
 .btn-bege:hover { background: var(--bege-hover); }
 .btn-claro { background: #fff; color: var(--verde-escuro); }
+.btn-whats { background: #25d366; color: #fff; text-decoration: none; }
+.btn-whats:hover { background: #1ebe5b; }
+.btn-whats svg { width: 20px; height: 20px; }
+.perfil-whats { grid-column: 1 / -1; font-size: 16px; padding: 14px 20px; }
+.btn-icone { padding: 11px !important; }
+.btn-topo-whats { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; background: #25d366; color: #fff; }
+.btn-topo-whats:hover { background: #1ebe5b; }
+.btn-topo-whats svg { width: 18px; height: 18px; }
+.rodape-botoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.rodape-tel a { color: #fff; }
+.cta-botoes { display: flex; gap: 8px; }
+.whats-flutuante {
+  position: fixed; right: 22px; bottom: 22px; z-index: 55; display: flex; align-items: center; gap: 8px; text-decoration: none;
+  background: #25d366; color: #fff; border-radius: 999px; padding: 12px 18px 12px 14px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, .35); animation: pulsar 2.6s ease-in-out infinite;
+}
+.whats-flutuante svg { width: 28px; height: 28px; }
+.whats-flutuante:hover { background: #1ebe5b; }
+@keyframes pulsar { 0%, 100% { box-shadow: 0 8px 24px rgba(37,211,102,.35); } 50% { box-shadow: 0 8px 34px rgba(37,211,102,.6); } }
 .btn-claro:hover { background: var(--rose-claro); }
 .btn-medio { padding: 11px 26px; }
 .btn-largo { width: 100%; margin-top: 14px; }
@@ -366,7 +385,12 @@ ul { margin: 0; padding: 0; list-style: none; }
   }
   .cta-movel strong { display: block; font-size: 14px; font-weight: 500; }
   .cta-movel small { color: var(--cinza); font-size: 12px; }
-  .cta-movel .btn { padding: 11px 18px; }
+  .cta-movel .btn { padding: 11px 18px; white-space: nowrap; }
+  .cta-movel > div:first-child { min-width: 0; flex: 1; overflow: hidden; }
+  .cta-botoes { flex-shrink: 0; }
+  .cta-movel strong, .cta-movel small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .whats-flutuante { display: none; }
+  .btn-topo-whats { display: none; }
 }
 @media (max-width: 600px) {
   .topo-inner { padding: 10px 14px; gap: 10px; flex-wrap: wrap; }
@@ -389,6 +413,8 @@ ul { margin: 0; padding: 0; list-style: none; }
   .filtros { flex-direction: column; }
   .select-wrap { min-width: 0; }
   .op-topo .btn { width: 100%; }
+  .cta-movel { padding: 10px 12px; }
+  .cta-movel .btn { padding: 11px 14px; font-size: 14px; }
   .form .duas { grid-template-columns: 1fr; }
   .folha-fundo { align-items: flex-end; padding: 0; }
   .folha { border-radius: 22px 22px 0 0; max-width: none; max-height: 92vh; animation: subirFolha .25s ease-out; }

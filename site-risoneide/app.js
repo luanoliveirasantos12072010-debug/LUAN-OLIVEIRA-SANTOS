@@ -78,6 +78,16 @@
     return false;
   }
 
+  var MSG_PADRAO = "Olá, " + D.primeiroNome + "! Vim pelo seu site e gostaria de agendar uma consulta.";
+  function btnWhats(texto, msg) {
+    if (!D.whatsapp) return "";
+    return '<a class="btn btn-whats btn-largo" target="_blank" rel="noopener" href="' + linkWhats(msg || MSG_PADRAO) + '">' + I.whats + esc(texto || "Chamar no WhatsApp") + "</a>";
+  }
+  document.querySelectorAll(".js-whats").forEach(function (a) {
+    if (D.whatsapp) a.href = linkWhats(MSG_PADRAO); else a.hidden = true;
+  });
+  if ($("tel-rodape")) $("tel-rodape").textContent = D.telefone || D.whatsapp;
+
   // =================== PERFIL ===================
   $("nome").textContent = D.nome;
   $("profissao").textContent = D.profissao;
@@ -121,7 +131,7 @@
   function folhaMaisDetalhes(completo) {
     var h = "<h3>Trabalho como</h3>" + lista(D.trabalhoComo) + "<h3>Experiência em</h3>" + lista(D.experienciaEmDetalhes);
     if (completo) h += "<h3>Formação</h3>" + lista(D.formacao) + "<h3>Idiomas</h3>" + lista(D.idiomas) + '<h3>Principais doenças tratadas</h3><div class="tags">' + tags(D.doencas) + "</div>";
-    h += '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>';
+    h += '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>' + btnWhats();
     abrirFolha("Mais detalhes", h);
   }
 
@@ -149,7 +159,8 @@
     s.locais.forEach(function (c) {
       h += cabLocal(c) + '<div class="f-item"><strong>' + esc(s.nome) + "</strong>" + precoModal(s) + (s.descricao ? "<p>" + esc(s.descricao) + "</p>" : "") + "</div>";
     });
-    h += '<button class="btn btn-verde btn-largo" data-acao="solicitar" data-servico="' + i + '">Agendar este serviço</button>';
+    h += '<button class="btn btn-verde btn-largo" data-acao="solicitar" data-servico="' + i + '">Agendar este serviço</button>' +
+      btnWhats("Perguntar no WhatsApp", "Olá, " + D.primeiroNome + "! Vim pelo seu site e gostaria de saber mais sobre: " + s.nome + ".");
     abrirFolha(s.nome, h);
   }
 
@@ -159,13 +170,15 @@
     if (chave === "tele") {
       return '<div class="consultorio"><div class="consultorio-titulo"><img class="mini-foto" src="' + esc(D.foto) + '" alt="">Teleconsulta<small>&nbsp;· online, de onde você estiver</small></div>' + ILU_TELE +
         "<p>Atendimento por chamada de vídeo, com o mesmo cuidado da consulta presencial. Ideal para quem mora longe ou tem a rotina corrida.</p>" +
-        '<button class="btn btn-verde" data-acao="solicitar" data-modalidade="Teleconsulta">Agendar teleconsulta</button></div>';
+        '<button class="btn btn-verde" data-acao="solicitar" data-modalidade="Teleconsulta">Agendar teleconsulta</button>' +
+        btnWhats("Agendar teleconsulta pelo WhatsApp", "Olá, " + D.primeiroNome + "! Vim pelo seu site e gostaria de agendar uma teleconsulta.") + "</div>";
     }
     var L = LOCAIS.end;
     return '<div class="consultorio"><div class="consultorio-titulo">' + I.local + "<div>" + esc(L.titulo) + "<small>" + esc(L.local) + "</small></div></div>" +
       '<iframe class="mapa" loading="lazy" title="Mapa do consultório" src="https://maps.google.com/maps?q=' + encodeURIComponent(L.mapa) + '&output=embed"></iframe>' +
       '<p><a class="link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(L.mapa) + '">Como chegar</a></p>' +
-      '<button class="btn btn-verde" data-acao="solicitar" data-modalidade="Presencial">Agendar consulta presencial</button></div>';
+      '<button class="btn btn-verde" data-acao="solicitar" data-modalidade="Presencial">Agendar consulta presencial</button>' +
+      btnWhats("Agendar presencial pelo WhatsApp", "Olá, " + D.primeiroNome + "! Vim pelo seu site e gostaria de agendar uma consulta presencial.") + "</div>";
   }
   function selecionarLocal(chave) {
     localAtual = chave;
@@ -183,7 +196,7 @@
     var servs = D.servicos.filter(function (s) { return s.locais.indexOf(chave) !== -1; });
     h += '<h3>Serviços neste local</h3><button class="link-btn link" id="ver-servicos">Ver serviços</button><ul class="lista-ponto f-servicos" id="f-servicos" hidden>' +
       servs.map(function (s) { return "<li>" + esc(s.nome) + " • " + (s.preco ? esc(s.preco) : "Consultar valores") + "</li>"; }).join("") + "</ul>";
-    h += '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>';
+    h += '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>' + btnWhats();
     abrirFolha(chave === "tele" ? "Teleconsulta" : "Consultório presencial", h, function (c) {
       c.querySelector("#ver-servicos").onclick = function () { var u = c.querySelector("#f-servicos"); u.hidden = !u.hidden; };
     });
@@ -199,7 +212,7 @@
     if (D.whatsapp) h += '<div class="f-linha">' + I.whats + '<a target="_blank" rel="noopener" href="' + linkWhats("Olá, " + D.primeiroNome + "! Gostaria de agendar uma consulta.") + '">Conversar no WhatsApp</a></div>';
     if (D.telefone) h += '<div class="f-linha">' + I.fone + '<a href="tel:' + esc(D.telefone.replace(/[^\d+]/g, "")) + '">' + esc(D.telefone) + "</a></div>";
     if (D.email) h += '<div class="f-linha">' + I.email + '<a href="mailto:' + esc(D.email) + '">' + esc(D.email) + "</a></div>";
-    h += '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>';
+    h += btnWhats("Chamar no WhatsApp") + '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>';
     abrirFolha("Informações de contato", h, function (c) { c.querySelector("#sel-local").onchange = function () { folhaContato(this.value); }; });
   }
 
@@ -210,7 +223,8 @@
       '<ul class="lista-ponto"><li>Você agenda e paga a consulta particular (PIX, dinheiro ou depósito).</li><li>Ao final, recebe o recibo com os dados da psicóloga e o CRP.</li>' +
       "<li>Envia o recibo para o seu plano de saúde, pelo aplicativo ou site dele.</li><li>O plano devolve o valor conforme as regras do seu contrato.</li></ul>" +
       '<p class="cinza" style="margin-top:12px">Dica: consulte seu plano antes para saber quanto ele reembolsa por sessão de psicoterapia.</p>' +
-      '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>');
+      '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>' +
+      btnWhats("Tirar dúvidas no WhatsApp", "Olá, " + D.primeiroNome + "! Vim pelo seu site e tenho uma dúvida sobre reembolso do plano de saúde."));
   }
 
   // =================== AGENDAR ===================
@@ -220,7 +234,7 @@
     var opts = '<option value="">Ainda não sei</option>' + D.servicos.map(function (s, i) {
       return '<option value="' + i + '"' + (String(i) === String(servicoIdx) ? " selected" : "") + ">" + esc(s.nome) + "</option>";
     }).join("");
-    var h = "<p>Preencha seus dados e " + esc(D.primeiroNome) + " entrará em contato para confirmar o melhor dia e horário.</p>" +
+    var h = "<p>Preencha seus dados e a mensagem será enviada para o WhatsApp de " + esc(D.primeiroNome) + ", que confirmará o melhor dia e horário.</p>" +
       '<form class="form" id="form-ag" novalidate>' +
       '<label for="ag-nome">Seu nome *</label><input type="text" id="ag-nome" autocomplete="name" required>' +
       '<div class="duas"><div><label for="ag-tel">WhatsApp / telefone *</label><input type="tel" id="ag-tel" autocomplete="tel" placeholder="(87) 99999-9999" required></div>' +
@@ -230,7 +244,8 @@
       '<div><label for="ag-dia">Dia de preferência</label><input type="date" id="ag-dia" min="' + hojeISO() + '" value="' + esc(diaPreferido) + '"></div></div>' +
       '<label for="ag-msg">Mensagem <em>(opcional)</em></label><textarea id="ag-msg" rows="3" placeholder="Conte brevemente o que você procura, se quiser."></textarea>' +
       '<label class="check"><input type="checkbox" id="ag-ok"> <span>Concordo com a <a href="#" data-acao="privacidade">política de privacidade</a>.</span></label>' +
-      '<button class="btn btn-verde btn-largo" type="submit" id="ag-enviar" disabled>Enviar solicitação</button></form>';
+      '<button class="btn btn-whats btn-largo" type="submit" id="ag-enviar" disabled>' + I.whats + 'Enviar pelo WhatsApp</button></form>' +
+      (D.whatsapp ? '<p class="cinza" style="text-align:center;margin-top:14px">Prefere conversar direto? <a class="link" target="_blank" rel="noopener" href="' + linkWhats(MSG_PADRAO) + '">Abrir o WhatsApp</a></p>' : "");
     abrirFolha("Agende sua consulta", h, function (c) {
       var nome = c.querySelector("#ag-nome"), tel = c.querySelector("#ag-tel"), ok = c.querySelector("#ag-ok"), btn = c.querySelector("#ag-enviar");
       function validar() { btn.disabled = !(nome.value.trim() && tel.value.replace(/\D/g, "").length >= 8 && ok.checked); }
@@ -399,7 +414,7 @@
     ["Posso ser atendido online, sem ter que ir até o consultório?", "Sim. " + esc(N) + " atende por teleconsulta, por chamada de vídeo. <button class=\"link-btn link-verde\" data-acao=\"solicitar\" data-modalidade=\"Teleconsulta\">Agendar teleconsulta</button>"],
     ["Quais métodos de pagamento são aceitos?", esc(D.pagamentos.join(", ")) + "."],
     ["Em quais idiomas " + N + " atende?", esc(N) + " atende em " + esc(D.idiomas.join(", ")) + "."],
-    ["Como posso marcar uma consulta?", "Toque em <button class=\"link-btn link-verde\" data-acao=\"solicitar\">Agendar consulta</button>, preencha seus dados e escolha o dia de sua preferência. A psicóloga entra em contato para confirmar o horário."],
+    ["Como posso marcar uma consulta?", "Pelo WhatsApp " + esc(D.telefone) + " (<a class=\"link-verde\" target=\"_blank\" rel=\"noopener\" href=\"" + linkWhats(MSG_PADRAO) + "\">clique aqui para chamar</a>) ou tocando em <button class=\"link-btn link-verde\" data-acao=\"solicitar\">Agendar consulta</button> e escolhendo o dia de sua preferência."],
     ["O que outros pacientes dizem sobre " + N + "?", '<span id="faq-media"></span>'],
     ["Quais são os convênios aceitos?", "As consultas são particulares, com recibo para reembolso pelo seu plano de saúde. <button class=\"link-btn link\" data-acao=\"planos\">Veja como funciona o reembolso.</button>"],
   ];
