@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Risoneide Gomes Xavier — Psicóloga em Petrolina | CRP PE 07436</title>
+  <meta name="description" content="Risoneide Gomes Xavier, psicóloga em Petrolina (CRP PE 07436). Psicoterapia, terapia de casal, tratamento de ansiedade e depressão. Atendimento presencial e teleconsulta." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topo">
+  <div class="topo-inner">
+    <a class="logo" href="#">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a2 2 0 0 1 2 2v5.1l4.4-2.6a2 2 0 1 1 2 3.5L16 12l4.4 2.5a2 2 0 1 1-2 3.5L14 15.4V20a2 2 0 1 1-4 0v-4.6L5.6 18a2 2 0 1 1-2-3.5L8 12 3.6 9.5a2 2 0 1 1 2-3.5L10 9.1V4a2 2 0 0 1 2-2z"/></svg>
+      <span>Risoneide Gomes Xavier</span>
+    </a>
+    <nav class="topo-nav">
+      <a href="#experiencia">Experiência</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#consultorios">Consultórios</a>
+      <a href="#opinioes">Opiniões</a>
+    </nav>
+    <button class="btn-topo" data-abrir="modal-atendimento">Agendar consulta</button>
+  </div>
+</header>
+
+<div class="pagina">
+  <nav class="breadcrumb" aria-label="Navegação">
+    <a href="#">Homepage</a> / <a href="#experiencia">Psicólogo</a> / <a href="#consultorios">Petrolina</a> / <strong>Risoneide Gomes Xavier</strong>
+  </nav>
+
+  <div class="layout">
+    <main class="coluna-principal">
+
+      <!-- PERFIL -->
+      <section class="card perfil">
+        <div class="perfil-topo">
+          <div class="avatar">
+            <img id="foto" alt="Foto de Risoneide Gomes Xavier" />
+            <span class="avatar-iniciais">RX</span>
+            <span class="verificado" title="Perfil verificado">
+              <svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+            </span>
+          </div>
+          <div class="perfil-info">
+            <h1 id="nome"></h1>
+            <p><span id="profissao"></span> · <a href="#experiencia" class="link">Mais</a></p>
+            <p><span id="cidade"></span> <a href="#consultorios" class="link" id="qtd-enderecos"></a></p>
+            <p>Número de registro: <span id="registro"></span></p>
+            <p class="estrelas-linha"><span class="estrelas" id="estrelas-topo"></span> <a href="#opinioes" class="link" id="qtd-opinioes"></a></p>
+          </div>
+          <button class="favorito" id="favorito" aria-label="Salvar nos favoritos" aria-pressed="false">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.4 1.1 4.2 2.3h2C13.8 6.1 15.2 5 17.2 5c3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg>
+          </button>
+        </div>
+        <div class="perfil-botoes">
+          <button class="btn btn-verde" data-abrir="modal-contato">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            Informações de contato
+          </button>
+          <button class="btn btn-bege" data-abrir="modal-atendimento">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            Solicite um atendimento
+          </button>
+        </div>
+      </section>
+
+      <!-- AGENDA (no celular aparece aqui) -->
+      <div class="agenda-mobile"></div>
+
+      <!-- EXPERIÊNCIA -->
+      <section class="card" id="experiencia">
+        <h2>Experiência</h2>
+        <div class="resumo-numeros">
+          <button class="numero" data-abrir="modal-formacao"><strong id="n-formacao"></strong><span>Formação</span></button>
+          <a class="numero" href="#planos"><strong id="n-planos"></strong><span>Planos de saúde aceitos</span></a>
+        </div>
+        <p id="sobre-resumo"></p>
+        <p class="sobre-texto"><span id="sobre-texto"></span> <button class="link link-btn" id="sobre-mais">mais</button></p>
+
+        <h3>Abordagem terapêutica</h3>
+        <ul class="lista-check" id="abordagens"></ul>
+
+        <h3>Experiência em:</h3>
+        <ul class="lista-ponto" id="experiencia-em"></ul>
+
+        <h3>Principais doenças tratadas</h3>
+        <div class="tags" id="doencas"></div>
+
+        <div id="detalhes-extra" hidden>
+          <h3>Formação</h3>
+          <ul class="lista-ponto" id="formacao-lista"></ul>
+        </div>
+
+        <h3 class="mt">Pacientes que trato</h3>
+        <ul class="lista-icone" id="pacientes"></ul>
+
+        <div class="centro"><button class="btn btn-bege btn-peq" id="btn-mais-exp">Mostrar mais detalhes</button></div>
+      </section>
+
+      <!-- SERVIÇOS -->
+      <section class="card" id="servicos">
+        <h2>Serviços e preços</h2>
+        <ul class="servicos" id="lista-servicos"></ul>
+        <button class="link link-btn" id="btn-mais-servicos" hidden></button>
+        <p class="nota-precos"><button class="link-btn link-cinza" data-abrir="modal-precos">Como mostramos os preços?</button></p>
+      </section>
+
+      <!-- CONSULTÓRIOS -->
+      <section class="card" id="consultorios">
+        <h2>Consultórios (<span id="n-consultorios"></span>)</h2>
+        <div class="abas" role="tablist" id="abas"></div>
+        <div id="painel-consultorio"></div>
+
+        <h3>Modalidades de pagamento (visitas privadas)</h3>
+        <ul class="lista-ponto" id="pagamentos"></ul>
+        <div class="centro"><button class="btn btn-bege btn-peq" data-abrir="modal-atendimento">Mostrar mais detalhes</button></div>
+      </section>
+
+      <!-- PLANOS -->
+      <section class="card" id="planos">
+        <h2>Planos de saúde aceitos</h2>
+        <p class="cinza">Os planos de saúde são aceitos, mas a cobertura varia de acordo com o local e o serviço. Confirme durante a etapa de agendamento!</p>
+        <ul class="lista-ponto" id="lista-planos"></ul>
+        <button class="btn btn-bege btn-largo" data-abrir="modal-planos">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          Ver todos os planos de saúde
+        </button>
+      </section>
+
+      <!-- OPINIÕES -->
+      <section class="card" id="opinioes">
+        <div class="opinioes-topo">
+          <h2>Opiniões</h2>
+          <button class="btn btn-bege btn-peq" data-abrir="modal-opiniao">Enviar opinião</button>
+        </div>
+        <div class="estrelas estrelas-grandes" id="estrelas-opinioes"></div>
+        <p id="qtd-opinioes-2"></p>
+        <div class="aviso">
+          <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5z"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="#fff" stroke-width="2"/></svg>
+          <p>Todas as opiniões são importantes, por isso a profissional não pode pagar para alterar ou excluir uma opinião. <button class="link-btn link" data-abrir="modal-saiba">Saiba mais.</button></p>
+        </div>
+        <div class="filtros">
+          <select id="filtro-nota" aria-label="Filtrar opiniões">
+            <option value="todas">Todas as opiniões</option>
+            <option value="5">5 estrelas</option>
+            <option value="4">4 estrelas</option>
+            <option value="3">3 estrelas ou menos</option>
+          </select>
+          <label class="busca">
+            <input type="search" id="busca-opiniao" placeholder="Escreva a palavra que deseja" />
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4.5-4.5" stroke="currentColor" stroke-width="2"/></svg>
+          </label>
+        </div>
+        <ul class="lista-opinioes" id="lista-opinioes"></ul>
+      </section>
+    </main>
+
+    <!-- AGENDA LATERAL -->
+    <aside class="coluna-lateral">
+      <section class="card agenda" id="agenda">
+        <div class="agenda-cabecalho">
+          <strong>Agendar com Risoneide</strong>
+          <small id="agenda-status">Solicite seu horário</small>
+        </div>
+        <div class="agenda-corpo">
+          <div class="dias">
+            <button class="seta" id="dias-ant" aria-label="Dias anteriores">‹</button>
+            <div class="dias-lista" id="dias"></div>
+            <button class="seta" id="dias-prox" aria-label="Próximos dias">›</button>
+          </div>
+          <div class="agenda-msg">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4M10 14l4 4M14 14l-4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            <p id="agenda-texto">Escolha um dia e solicite seu atendimento. A confirmação do horário é feita diretamente com a psicóloga.</p>
+            <button class="link-btn link-verde" data-abrir="modal-atendimento">Solicite um atendimento</button>
+          </div>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<footer class="rodape">
+  <p><strong>Risoneide Gomes Xavier</strong> · Psicóloga · CRP PE 07436 · Petrolina - PE</p>
+  <p class="cinza">© <span id="ano"></span> Todos os direitos reservados.</p>
+</footer>
+
+<!-- ================= MODAIS ================= -->
+<div class="modal" id="modal-contato" hidden>
+  <div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="t-contato">
+    <button class="fechar" aria-label="Fechar">×</button>
+    <h2 id="t-contato">Informações de contato</h2>
+    <div id="contato-conteudo"></div>
+  </div>
+</div>
+
+<div class="modal" id="modal-atendimento" hidden>
+  <div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="t-atend">
+    <button class="fechar" aria-label="Fechar">×</button>
+    <h2 id="t-atend">Solicite um atendimento</h2>
+    <form id="form-atendimento" class="form">
+      <label>Seu nome<input name="nome" required /></label>
+      <label>Seu telefone<input name="telefone" type="tel" required /></label>
+      <label>Serviço<select name="servico" id="sel-servico"></select></label>
+      <label>Modalidade
+        <select name="modalidade"><option>Teleconsulta</option><option>Presencial</option></select>
+      </label>
+      <label>Dia de preferência<input name="dia" id="campo-dia" type="date" /></label>
+      <label>Mensagem (opcional)<textarea name="mensagem" rows="3"></textarea></label>
+      <button class="btn btn-verde btn-largo" type="submit">Enviar solicitação</button>
+      <p class="form-aviso cinza" id="form-aviso"></p>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="modal-opiniao" hidden>
+  <div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="t-op">
+    <button class="fechar" aria-label="Fechar">×</button>
+    <h2 id="t-op">Enviar opinião</h2>
+    <form id="form-opiniao" class="form">
+      <div class="nota-escolha" id="nota-escolha" role="radiogroup" aria-label="Sua nota"></div>
+      <label>Seu nome (apenas iniciais aparecem)<input name="nome" required /></label>
+      <label>Sua opinião<textarea name="texto" rows="4" required></textarea></label>
+      <button class="btn btn-verde btn-largo" type="submit">Enviar opinião</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="modal-formacao" hidden>
+  <div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="t-form">
+    <button class="fechar" aria-label="Fechar">×</button>
+    <h2 id="t-form">Formação</h2>
+    <ul class="lista-ponto" id="formacao-modal"></ul>
+  </div>
+</div>
+
+<div class="modal" id="modal-planos" hidden>
+  <div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="t-planos">
+    <button class="fechar" aria-label="Fechar">×</button>
+    <h2 id="t-planos">Planos de saúde aceitos</h2>
+    <ul class="lista-ponto" id="planos-modal"></ul>
+    <p class="cinza">Atendimentos por reembolso: você paga a consulta e recebe recibo para solicitar o reembolso ao seu plano.</p>
+  </div>
+</div>
+
+<div class="modal" id="modal-precos" hidden>
+  <div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="t-precos">
+    <button class="fechar" aria-label="Fechar">×</button>
+    <h2 id="t-precos">Como mostramos os preços?</h2>
+    <p>Os valores exibidos são definidos pela própria psicóloga e podem variar conforme o tipo e a duração do atendimento. "A partir de" indica o valor mínimo do serviço. Confirme o valor no momento do agendamento.</p>
+  </div>
+</div>
+
+<div class="modal" id="modal-saiba" hidden>
+  <div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="t-saiba">
+    <button class="fechar" aria-label="Fechar">×</button>
+    <h2 id="t-saiba">Sobre as opiniões</h2>
+    <p>As opiniões refletem a experiência de pacientes atendidos. Elas não podem ser compradas, alteradas ou excluídas pela profissional.</p>
+    <p><a class="link" id="link-original" target="_blank" rel="noopener">Ver as opiniões no perfil original</a></p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="dados.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
