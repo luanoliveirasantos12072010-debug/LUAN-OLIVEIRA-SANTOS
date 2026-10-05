@@ -1,0 +1,4 @@
+# Site estático: não há build. Caminhos relativos a esta pasta (diretório base).
+[build]
+  command = "echo 'Site estatico, sem build'"
+  publish = "."
