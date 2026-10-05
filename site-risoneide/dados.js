@@ -80,8 +80,8 @@ window.DADOS = {
 
   consultorios: [
     { tipo: "teleconsulta", titulo: "Teleconsulta" },
-    // PREENCHER: endereço do consultório presencial
-    { tipo: "endereco", titulo: "Consultório em Petrolina", endereco: "Petrolina - PE" },
+    // Endereço encontrado em busca na web; confirme o número da sala.
+    { tipo: "endereco", titulo: "Clínica Joaquim Nabuco", endereco: "R. Joaquim Nabuco, 541 - Centro, Petrolina - PE" },
   ],
 
   formasPagamento: ["Convênios médicos aceitos neste endereço"],
