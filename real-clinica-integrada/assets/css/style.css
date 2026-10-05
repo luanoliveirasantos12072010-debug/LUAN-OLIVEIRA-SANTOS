@@ -245,10 +245,9 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 /* =========================================================
    MARQUEE
    ========================================================= */
-.marquee { position: relative; background: var(--ink); color: #fff; overflow: hidden; padding: 26px 0; border-top: 1px solid var(--line-dark); }
+.marquee { pointer-events: none; position: relative; background: var(--ink); color: #fff; overflow: hidden; padding: 26px 0; border-top: 1px solid var(--line-dark); }
 .marquee--tilt { background: var(--orange); color: var(--ink); transform: rotate(-2deg) scale(1.04); margin: -24px 0 0; z-index: 3; border: 0; padding: 18px 0; }
 .marquee__track { display: flex; width: max-content; will-change: transform; animation: esteira var(--dur, 22s) ease-in-out infinite alternate; }
-.marquee:hover .marquee__track { animation-play-state: paused; }
 @keyframes esteira { from { transform: translateX(0); } to { transform: translateX(var(--dist, -40%)); } }
 .marquee__group { display: flex; align-items: center; gap: 46px; padding-right: 46px; }
 .marquee__group span { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: clamp(30px, 4vw, 58px); line-height: 1; white-space: nowrap; display: flex; align-items: center; gap: 46px; }
