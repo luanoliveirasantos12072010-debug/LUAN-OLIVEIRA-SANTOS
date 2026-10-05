@@ -388,15 +388,15 @@
       if (!notaEl) { setStatus("Escolha de 1 a 5 estrelas.", true); return; }
       var data = { nome: nome.slice(0, 60), nota: parseInt(notaEl.value, 10), comentario: comentario.slice(0, 600), foto: photoData, criadoEm: Date.now() };
 
-      var done = function () {
-        setStatus("Obrigado! Sua avaliação foi publicada.");
+      var done = function (local) {
+        setStatus(local ? "Obrigado! Sua avaliação foi salva neste aparelho." : "Obrigado! Sua avaliação foi publicada.");
         form.reset(); photoData = ""; preview.textContent = "📷"; photoLabel.textContent = "Escolher foto";
         submit.disabled = false;
       };
 
       if (store && uid) {
         submit.disabled = true; setStatus("Publicando…");
-        store.collection("avaliacoes").doc(uid).set(data).then(done, function (err) {
+        store.collection("avaliacoes").doc(uid).set(data).then(function () { done(false); }, function (err) {
           submit.disabled = false;
           if (err && err.code === "invalid_argument") setStatus("Esta página não permite publicar avaliações com o seu acesso.", true);
           else if (err && err.code === "quota_exceeded") setStatus("O limite de avaliações foi atingido.", true);
@@ -409,7 +409,7 @@
       items.unshift(data);
       try { localStorage.setItem(LOCAL_KEY, JSON.stringify(items.slice(0, 50))); } catch (err) { /* armazenamento indisponível */ }
       render(items);
-      done();
+      done(true);
     });
 
     useLocal();
