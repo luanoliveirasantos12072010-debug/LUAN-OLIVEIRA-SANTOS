@@ -19,6 +19,13 @@ window.DADOS = {
 
   nota: 5,
 
+  // AVALIAÇÕES SALVAS NO SITE (para todos os visitantes)
+  // Crie um projeto grátis em https://supabase.com e cole aqui a "Project URL"
+  // e a chave "anon public" (veja o passo a passo no LEIA-ME.md).
+  // Enquanto estiver vazio, cada avaliação fica salva só no aparelho de quem avaliou.
+  supabaseUrl: "",
+  supabaseChave: "",
+
   // ---------------- EXPERIÊNCIA ----------------
   formacao: [
     "Psicologia — UNICAP (Universidade Católica de Pernambuco)",
@@ -41,7 +48,7 @@ window.DADOS = {
     { icone: "crianca", texto: "Crianças a partir dos 16 anos de idade" },
   ],
   idiomas: ["Português"],
-  pagamentos: ["Dinheiro", "Depósito Bancário", "PIX"],
+  pagamentos: ["PIX", "Dinheiro", "Depósito Bancário", "Reembolso do plano de saúde (com recibo)"],
 
   // ---------------- CONSULTÓRIOS ----------------
   consultorios: {
