@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+  <title>Assistente Virtual | Real Clínica Integrada | Arapiraca - AL</title>
+  <meta name="description" content="Tire suas dúvidas sobre a Real Clínica Integrada em Arapiraca - AL: endereço, telefone, horário, atendimentos e como agendar pelo WhatsApp." />
+  <meta name="theme-color" content="#05161b" />
+  <link rel="icon" type="image/png" href="assets/img/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="ai-page">
+  <div class="ai-bg" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <header class="header is-page">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="Voltar para o site da Real Clínica Integrada">
+        <img class="brand__mark brand__mark--light" src="assets/img/logo-mark-light.png" alt="" width="256" height="178" />
+        <img class="brand__mark brand__mark--dark" src="assets/img/logo-mark.png" alt="" width="256" height="178" />
+        <span class="brand__name">Real Clínica Integrada<small>Assistente Virtual</small></span>
+      </a>
+      <div class="header__cta">
+        <a class="btn btn--glass" href="index.html">← Voltar ao site</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap ai-layout">
+    <section class="ai-intro" aria-label="Sobre o assistente">
+      <div class="orb" aria-hidden="true"></div>
+      <span class="eyebrow eyebrow--light">Assistente Virtual</span>
+      <h1 class="h-xl" style="margin:16px 0 22px">Como posso <span class="serif">ajudar?</span></h1>
+      <p>Pergunte sobre endereço, telefone, horário, Instagram, atendimentos e agendamento. As respostas usam apenas informações oficiais da clínica.</p>
+      <p>Quando quiser falar com uma pessoa, toque em <strong style="color:#fff">“Falar com a equipe”</strong> e o WhatsApp abre na hora.</p>
+    </section>
+
+    <section class="ai-chat-shell" data-chat-page aria-label="Conversa com o assistente virtual"></section>
+  </main>
+
+  <script src="assets/js/assistente.js"></script>
+  <script>
+    (function () {
+      var shell = document.querySelector("[data-chat-page]");
+      var chat = window.RealChat.mount(shell, { id: "p" });
+      var q = new URLSearchParams(location.search).get("q");
+      if (q) setTimeout(function () { chat.ask(q); }, 400);
+    })();
+  </script>
+</body>
+</html>
