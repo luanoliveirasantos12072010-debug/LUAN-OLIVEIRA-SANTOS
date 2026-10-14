@@ -32,16 +32,14 @@ window.DADOS = {
     "Especialização em Psicologia Clínica",
     "Especialização em Saúde Mental e Psicologia Organizacional",
   ],
-  sobreResumo: "Formada pela UNICAP,especialista em psicologia clínica , saúde mental e organizacional.",
-  sobreTexto: "Crise existencial, depressão, pânico, ansiedade, luto, conflito casal, mudanças de vida, dificuldade nos relacionamentos, avaliação vasectomia, insônia....",
+  sobreResumo: "Formada pela UNICAP, especialista em psicologia clínica, saúde mental e organizacional, com mais de 30 anos de experiência.",
   trabalhoComo: ["Psicóloga"],
   abordagens: ["Terapia de casal", "Psicoterapia"],
-  experienciaEm: ["Saúde mental"],
-  experienciaEmDetalhes: ["Terapia de Casal", "Psicoterapia", "Saúde Mental"],
-  doencas: [
-    "Agitação Psicomotora", "Ansiedade", "Ansiedade da Separação", "Ansiedade e medo de dirigir", "Angústia",
-    "Crise existencial", "Depressão", "Síndrome do pânico", "Luto", "Conflito de casal", "Mudanças de vida",
-    "Dificuldade nos relacionamentos", "Avaliação para vasectomia", "Insônia", "Estresse", "Transtorno depressivo",
+  // Mais de 30 anos trabalhando com:
+  experienciaEm: [
+    "Saúde mental", "Relações organizacionais", "Relações familiares", "Dificuldade de relacionamentos",
+    "Luto", "Depressão", "Transtorno de pânico", "Ansiedade",
+    "Avaliação profissional e vocacional", "Avaliação para vasectomia",
   ],
   pacientes: [
     { icone: "adulto", texto: "Adultos" },
@@ -55,7 +53,7 @@ window.DADOS = {
     tele: {
       aba: "Teleconsulta",
       titulo: "Teleconsulta",
-      preparo: "Prepare-se 10 minutos antes da consulta e verifique se o seu smartphone ou notebook está com a bateria carregada. Para uma videochamada, verifique se tudo funciona: conexão com a internet, câmera e microfone. Prepare também a documentação médica (como resultado de um exame) caso precise mostrar na consulta.",
+      preparo: "Prepare-se 10 minutos antes da consulta e verifique se o seu smartphone ou notebook está com a bateria carregada. Para uma videochamada, verifique se tudo funciona: conexão com a internet, câmera e microfone.",
     },
     end: {
       aba: "Endereço",
@@ -70,27 +68,29 @@ window.DADOS = {
   // ---------------- SERVIÇOS ----------------
   // preco: texto da lista | precoModal: texto dentro de "Detalhes"
   // locais: "end" = consultório, "tele" = teleconsulta
+  // Primeira consulta: a partir de R$ 280. Os demais valores são combinados com a psicóloga.
+  // preco: null aparece como "Valor a combinar".
   servicos: [
-    { nome: "Primeira consulta psicologia", preco: "R$ 200", precoModal: "200 R$", locais: ["end"] },
-    { nome: "Psicoterapia adulto", preco: "R$ 380", precoModal: "380 R$", locais: ["end"] },
-    { nome: "Tratamento da depressão", preco: "A partir de R$ 300", precoModal: "Desde 300 R$", locais: ["end"] },
-    { nome: "Tratamento da ansiedade", preco: "A partir de R$ 250", precoModal: "Desde 250 R$", locais: ["end"] },
+    { nome: "Primeira consulta", preco: "A partir de R$ 280", locais: ["end", "tele"],
+      descricao: "A primeira consulta tem duração maior: é uma avaliação para conhecer sua história e planejar o trabalho a ser desenvolvido." },
+    { nome: "Psicoterapia adulto", preco: null, locais: ["end"] },
+    { nome: "Tratamento da depressão", preco: null, locais: ["end"] },
+    { nome: "Tratamento da ansiedade", preco: null, locais: ["end"] },
     { nome: "Terapia Familiar", preco: null, locais: ["end"] },
-    { nome: "Terapia de Casal", preco: "R$ 400", precoModal: "400 R$", locais: ["end", "tele"] },
+    { nome: "Terapia de Casal", preco: null, locais: ["end", "tele"] },
     { nome: "Psicoterapia Psicanalítica", preco: null, locais: ["end"] },
-    { nome: "Psicoterapia de Grupo", preco: "R$ 200", precoModal: "200 R$", locais: ["end"] },
-    { nome: "Psicoterapia breve", preco: "R$ 200", precoModal: "200 R$", locais: ["end"] },
+    { nome: "Psicoterapia de Grupo", preco: null, locais: ["end"] },
+    { nome: "Psicoterapia breve", preco: null, locais: ["end"] },
     { nome: "Orientação Vocacional", preco: null, locais: ["end"] },
-    { nome: "Teleconsulta", preco: "A partir de R$ 200", precoModal: "Desde 200 R$", locais: ["tele"], temDescricao: true },
+    { nome: "Teleconsulta", preco: null, locais: ["tele"], temDescricao: true },
     { nome: "Orientação profissional", preco: null, locais: ["end"] },
     { nome: "Orientação aos pais", preco: null, locais: ["end"] },
     { nome: "Mudança de comportamento alimentar", preco: null, locais: ["end"] },
-    { nome: "Consulta psicológica do idoso", preco: "R$ 250", precoModal: "250 R$", locais: ["tele", "end"] },
-    { nome: "Consulta psicológica do adulto", preco: "R$ 250", precoModal: "250 R$", locais: ["tele", "end"] },
-    { nome: "Consulta psicológica do adolescente", preco: "A partir de R$ 250", precoModal: "Desde 250 R$", locais: ["end"] },
-    { nome: "Psicoterapia", preco: "A partir de R$ 200", precoModal: "Desde 200 R$", locais: ["end"],
-      descricao: "A primeira consulta presencial o valor é 280,00, o tempo é maior,  será uma avaliação do planejamento do Trabalho a ser desenvolvido. As próximas sessões  podem  ser negociadas ." },
-    { nome: "Tratamento da síndrome do pânico", preco: "R$ 250", precoModal: "250 R$", locais: ["end"] },
+    { nome: "Consulta psicológica do idoso", preco: null, locais: ["tele", "end"] },
+    { nome: "Consulta psicológica do adulto", preco: null, locais: ["tele", "end"] },
+    { nome: "Consulta psicológica do adolescente", preco: null, locais: ["end"] },
+    { nome: "Psicoterapia", preco: null, locais: ["end"] },
+    { nome: "Tratamento da síndrome do pânico", preco: null, locais: ["end"] },
   ],
 
   // ---------------- OPINIÕES ----------------

@@ -20,10 +20,6 @@
 
   // ---------- respostas locais (sem IA) ----------
   var CRISE = /suicid|me matar|matar a mim|tirar (a )?minha vida|nao quero mais viver|quero morrer|vontade de morrer|me machucar|automutila|me cortar|acabar com tudo|emergencia/;
-  function precos(nomes) {
-    return D.servicos.filter(function (s) { return nomes.indexOf(s.nome) !== -1; })
-      .map(function (s) { return "• " + s.nome + ": " + (s.preco || "consultar valores"); }).join("\n");
-  }
   var REGRAS = [
     [CRISE, function () {
       return { t: "Sinto muito que você esteja passando por isso. Você não está sozinho(a). Por favor, ligue agora para o CVV no 188 (gratuito, 24 horas) ou acesse cvv.org.br. Em emergência, ligue 192 (SAMU) ou vá ao pronto-socorro mais próximo.\n\nQuando se sentir em segurança, a " + D.primeiroNome + " pode te acompanhar.", acoes: ["tel188", "whats"] };
@@ -31,26 +27,26 @@
     [/^(oi|ola|bom dia|boa tarde|boa noite|eai|e ai|hey|opa)\b/, function () { return { t: "Olá! Que bom ter você por aqui. Me conta: qual é a sua dúvida? Posso falar sobre valores, teleconsulta, endereço, planos de saúde ou agendamento." }; }],
     [/obrigad|valeu|agradec/, function () { return { t: "Por nada! Se surgir outra dúvida, é só perguntar. Quando quiser agendar, fale com a " + D.primeiroNome + " pelo WhatsApp.", acoes: ["whats"] }; }],
     [/primeira consulta|primeira sessao|como funciona|como e a consulta|quanto tempo|duracao/, function () {
-      return { t: "A primeira consulta (R$ 200) é o momento de a " + D.primeiroNome + " conhecer a sua história e entender o que você procura. Na psicoterapia presencial, a primeira consulta custa R$ 280: ela é mais longa e serve para avaliar e planejar o trabalho. As sessões seguintes podem ser negociadas com ela.", acoes: ["agendar", "whats"] };
+      return { t: "A primeira consulta custa a partir de R$ 280 e tem duração maior, porque é uma avaliação para conhecer sua história e planejar o trabalho a ser desenvolvido. Os valores das sessões seguintes e dos demais serviços são combinados diretamente com a " + D.primeiroNome + ".", acoes: ["agendar", "whats"] };
     }],
-    [/casal|relacionamento|namor|marido|esposa|conjuge/, function () { return { t: "Sim! A " + D.primeiroNome + " atende terapia de casal, presencial ou online. O valor é R$ 400. Ela também trabalha com dificuldades nos relacionamentos e conflitos de casal na terapia individual.", acoes: ["agendar", "whats"] }; }],
+    [/casal|relacionamento|namor|marido|esposa|conjuge/, function () { return { t: "Sim! A " + D.primeiroNome + " atende terapia de casal, presencial ou online, e tem mais de 30 anos de experiência com dificuldades de relacionamento e relações familiares. O valor é combinado diretamente com ela; a primeira consulta custa a partir de R$ 280.", acoes: ["agendar", "whats"] }; }],
     [/famil|filho|pais\b|orientacao aos pais/, function () { return { t: "Ela atende terapia familiar e orientação aos pais. Os valores desses atendimentos são combinados diretamente com ela.", acoes: ["whats"] }; }],
-    [/vocacional|profissional|carreira|profissao/, function () { return { t: "Sim, a " + D.primeiroNome + " faz orientação vocacional e orientação profissional. Os valores são combinados diretamente com ela.", acoes: ["whats"] }; }],
+    [/vocacional|profissional|carreira|profissao|vasectomia/, function () { return { t: "Sim, a " + D.primeiroNome + " faz avaliação profissional e vocacional e também avaliação psicológica para vasectomia. Os valores são combinados diretamente com ela.", acoes: ["whats"] }; }],
     [/preco|valor|quanto|custa|cobra|caro|barato/, function () {
-      return { t: "Estes são os principais valores (consulta particular):\n" + precos(["Primeira consulta psicologia", "Psicoterapia", "Psicoterapia adulto", "Teleconsulta", "Terapia de Casal", "Tratamento da ansiedade", "Tratamento da depressão"]) + "\n\nOs outros serviços estão na seção \"Serviços e preços\" do site.", acoes: ["agendar", "whats"] };
+      return { t: "A primeira consulta custa a partir de R$ 280 e tem duração maior, porque é uma avaliação para conhecer sua história e planejar o trabalho a ser desenvolvido. Os valores das sessões seguintes e dos demais serviços são combinados diretamente com a " + D.primeiroNome + ".", acoes: ["agendar", "whats"] };
     }],
     [/online|tele|video|distancia|outra cidade|outro estado|longe|remot/, function () {
-      return { t: "Sim! A " + D.primeiroNome + " atende por teleconsulta, por chamada de vídeo, inclusive pacientes de outros estados. A teleconsulta custa a partir de R$ 200. Dica: entre 10 minutos antes, com o celular ou notebook carregado e internet, câmera e microfone funcionando.", acoes: ["agendar", "whats"] };
+      return { t: "Sim! A " + D.primeiroNome + " atende por teleconsulta, por chamada de vídeo, inclusive pacientes de outros estados. Dica: entre 10 minutos antes, com o celular ou notebook carregado e internet, câmera e microfone funcionando.", acoes: ["agendar", "whats"] };
     }],
     [/onde|endereco|local|fica|chegar|consultorio|presencial|sala/, function () { return { t: "O consultório fica na R. Joaquim Nabuco, 541, 1º andar, sala 108, no Empresarial Trade Center Dom Campelo, em Petrolina (PE). Também há atendimento online.", acoes: ["mapa", "agendar"] }; }],
     [/plano|convenio|unimed|bradesco|amil|sulamerica|hapvida|reembols/, function () { return { t: "A consulta é particular, mas a " + D.primeiroNome + " fornece recibo para você pedir reembolso ao seu plano de saúde. O valor devolvido depende das regras do seu plano, então vale consultar antes.", acoes: ["whats"] }; }],
     [/pagamento|pagar|pix|cartao|dinheiro|deposito|transferencia|parcel/, function () { return { t: "Ela aceita PIX, dinheiro e depósito bancário. Para outras formas de pagamento, confirme diretamente com ela.", acoes: ["whats"] }; }],
     [/agend|marcar|horario|disponib|vaga|quando|dia /, function () { return { t: "Para agendar, fale com a " + D.primeiroNome + " pelo WhatsApp " + D.telefone + " ou toque em \"Agendar consulta\" e escolha o dia de sua preferência. Ela confirma o horário com você.", acoes: ["whats", "agendar"] }; }],
     [/ansiedade|ansios|panico|crise de|depress|triste|luto|perda|insonia|dormir|estresse|angustia|medo/, function () {
-      return { t: "Sinto muito que você esteja passando por isso. A " + D.primeiroNome + " tem experiência com ansiedade, pânico, depressão, luto, angústia e insônia, e pode te ajudar na consulta. O tratamento da ansiedade começa em R$ 250 e o da depressão em R$ 300.", acoes: ["agendar", "whats"] };
+      return { t: "Sinto muito que você esteja passando por isso. A " + D.primeiroNome + " tem mais de 30 anos de experiência em saúde mental, trabalhando com ansiedade, transtorno de pânico, depressão e luto, e pode te ajudar na consulta.", acoes: ["agendar", "whats"] };
     }],
-    [/idade|crianca|adolescente|jovem|idoso|anos/, function () { return { t: "Ela atende adultos, idosos e jovens a partir de 16 anos. Há consulta específica para adolescentes (a partir de R$ 250) e para idosos (R$ 250)." }; }],
-    [/formacao|formada|experiencia|crp|registro|faculdade|especiali|quem e/, function () { return { t: D.nome + " é psicóloga (CRP PE 07436), formada pela UNICAP e especialista em psicologia clínica, saúde mental e psicologia organizacional. Trabalha com psicoterapia e terapia de casal." }; }],
+    [/idade|crianca|adolescente|jovem|idoso|anos/, function () { return { t: "Ela atende adultos, idosos e jovens a partir de 16 anos." }; }],
+    [/formacao|formada|experiencia|crp|registro|faculdade|especiali|quem e/, function () { return { t: D.nome + " é psicóloga (CRP PE 07436), formada pela UNICAP e especialista em psicologia clínica, saúde mental e organizacional, com mais de 30 anos de experiência." }; }],
     [/avaliac|opini|recomend|\be boa\b|\be bom\b|confiavel/, function () { return { t: "O atendimento dela tem nota 5 de 5, com 18 avaliações. Os pacientes elogiam o acolhimento, a escuta atenta, a pontualidade e os resultados. Você pode ler todas na seção \"Avaliações\" do site." }; }],
     [/robo|humano|\bia\b|inteligencia artificial|quem e voce|voce e (um|uma|a)/, function () { return { t: "Sou o assistente virtual do site da " + D.primeiroNome + ". Para falar com ela pessoalmente, use o WhatsApp.", acoes: ["whats"] }; }],
   ];

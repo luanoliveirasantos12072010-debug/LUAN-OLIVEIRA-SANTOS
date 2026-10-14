@@ -50,8 +50,9 @@
   function guardar(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function ler(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function rolarPara(id) { var el = $(id); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }
-  function precoLista(s) { return s.preco ? '<span class="preco">' + esc(s.preco) + "</span>" : '<span class="preco consultar">Consultar valores</span>'; }
-  function precoModal(s) { return s.preco ? esc(s.preco) : '<span class="consultar">Consultar valores</span>'; }
+  var A_COMBINAR = "Valor a combinar";
+  function precoLista(s) { return s.preco ? '<span class="preco">' + esc(s.preco) + "</span>" : '<span class="preco consultar">' + A_COMBINAR + "</span>"; }
+  function precoModal(s) { return s.preco ? esc(s.preco) : '<span class="consultar">' + A_COMBINAR + "</span>"; }
   function lista(itens) { return '<ul class="lista-ponto">' + itens.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; }
   function dataHoje(d) { return (d || new Date()).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" }); }
 
@@ -114,29 +115,14 @@
 
   // =================== EXPERIÊNCIA ===================
   $("n-formacao").textContent = D.formacao.length;
-  $("n-planos").textContent = D.planos.length;
   $("sobre-resumo").textContent = D.sobreResumo;
-  $("sobre-texto").textContent = D.sobreTexto;
-  $("sobre-mais").addEventListener("click", function () {
-    var fechado = $("sobre-wrap").classList.toggle("recolhido");
-    this.textContent = fechado ? "mais" : "menos";
-  });
   $("abordagens").innerHTML = D.abordagens.map(function (a) { return "<li>" + I.check + esc(a) + "</li>"; }).join("");
-  $("experiencia-em").innerHTML = D.experienciaEm.map(function (a) { return "<li>" + esc(a) + "</li>"; }).join("");
+  $("experiencia-em").innerHTML = D.experienciaEm.map(function (a) { return '<span class="tag">' + esc(a) + "</span>"; }).join("");
   $("pacientes").innerHTML = D.pacientes.map(function (p) { return "<li>" + I[p.icone] + esc(p.texto) + "</li>"; }).join("");
 
-  function tags(l) { return l.map(function (d) { return '<span class="tag">' + esc(d) + "</span>"; }).join(""); }
-  function pintarDoencas(todas) {
-    var resto = D.doencas.length - 5;
-    $("doencas").innerHTML = tags(todas ? D.doencas : D.doencas.slice(0, 5)) +
-      (resto > 0 ? '<button class="link-btn link" id="mais-doencas">' + (todas ? "menos" : "+" + resto) + "</button>" : "");
-    var b = $("mais-doencas"); if (b) b.onclick = function () { pintarDoencas(!todas); };
-  }
-  pintarDoencas(false);
-
   function folhaMaisDetalhes(completo) {
-    var h = "<h3>Trabalho como</h3>" + lista(D.trabalhoComo) + "<h3>Experiência em</h3>" + lista(D.experienciaEmDetalhes);
-    if (completo) h += "<h3>Formação</h3>" + lista(D.formacao) + "<h3>Idiomas</h3>" + lista(D.idiomas) + '<h3>Principais doenças tratadas</h3><div class="tags">' + tags(D.doencas) + "</div>";
+    var h = "<h3>Trabalho como</h3>" + lista(D.trabalhoComo) + "<h3>Mais de 30 anos trabalhando com</h3>" + lista(D.experienciaEm);
+    if (completo) h += "<h3>Formação</h3>" + lista(D.formacao) + "<h3>Idiomas</h3>" + lista(D.idiomas);
     h += '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>' + btnWhats();
     abrirFolha("Mais detalhes", h);
   }
@@ -201,7 +187,7 @@
     else h += "<h3>Endereço</h3><p>" + esc(LOCAIS.end.titulo) + '<br><span class="cinza">' + esc(LOCAIS.end.local) + "</span></p>";
     var servs = D.servicos.filter(function (s) { return s.locais.indexOf(chave) !== -1; });
     h += '<h3>Serviços neste local</h3><button class="link-btn link" id="ver-servicos">Ver serviços</button><ul class="lista-ponto f-servicos" id="f-servicos" hidden>' +
-      servs.map(function (s) { return "<li>" + esc(s.nome) + " • " + (s.preco ? esc(s.preco) : "Consultar valores") + "</li>"; }).join("") + "</ul>";
+      servs.map(function (s) { return "<li>" + esc(s.nome) + " • " + (s.preco ? esc(s.preco) : A_COMBINAR) + "</li>"; }).join("") + "</ul>";
     h += '<button class="btn btn-verde btn-largo" data-acao="solicitar">Agendar consulta</button>' + btnWhats();
     abrirFolha(chave === "tele" ? "Teleconsulta" : "Consultório presencial", h, function (c) {
       c.querySelector("#ver-servicos").onclick = function () { var u = c.querySelector("#f-servicos"); u.hidden = !u.hidden; };
@@ -413,7 +399,7 @@
   // =================== PERGUNTAS FREQUENTES ===================
   var N = D.nome;
   var FAQ = [
-    ["Quais são as principais especialidades de " + N + "?", esc(N) + " é psicóloga, especialista em psicologia clínica, saúde mental e organizacional. Entre os serviços oferecidos estão: Psicoterapia, Terapia de Casal, Terapia Familiar, Psicoterapia breve e de Grupo, Tratamento da ansiedade, da depressão e da síndrome do pânico, Orientação Vocacional e profissional e consultas para adolescentes, adultos e idosos."],
+    ["Quais são as principais especialidades de " + N + "?", esc(N) + " é psicóloga, formada pela UNICAP e especialista em psicologia clínica, saúde mental e organizacional, com mais de 30 anos de experiência. Trabalha com " + esc(D.experienciaEm.join(", ").toLowerCase()) + "."],
     ["Onde fica o consultório de " + N + "?", esc(N) + " atende em:<ul><li>" + esc(LOCAIS.end.titulo) + " — " + esc(LOCAIS.end.local) + "</li><li>Teleconsulta (online)</li></ul>"],
     ["Posso ser atendido online, sem ter que ir até o consultório?", "Sim. " + esc(N) + " atende por teleconsulta, por chamada de vídeo. <button class=\"link-btn link-verde\" data-acao=\"solicitar\" data-modalidade=\"Teleconsulta\">Agendar teleconsulta</button>"],
     ["Quais métodos de pagamento são aceitos?", esc(D.pagamentos.join(", ")) + "."],
@@ -473,8 +459,8 @@
 
   // =================== BUSCA DO TOPO ===================
   var itensBusca = [];
-  D.servicos.forEach(function (s, i) { itensBusca.push({ t: s.nome, sub: "Serviço · " + (s.preco || "Consultar valores"), acao: function () { folhaServico(i); } }); });
-  D.doencas.forEach(function (d) { itensBusca.push({ t: d, sub: "Doença tratada", acao: function () { pintarDoencas(true); rolarPara("experiencia"); } }); });
+  D.servicos.forEach(function (s, i) { itensBusca.push({ t: s.nome, sub: "Serviço · " + (s.preco || A_COMBINAR), acao: function () { folhaServico(i); } }); });
+  D.experienciaEm.forEach(function (d) { itensBusca.push({ t: d, sub: "Experiência", acao: function () { rolarPara("experiencia"); } }); });
   [["Agendar consulta", null], ["Experiência", "experiencia"], ["Consultórios / Endereço", "consultorios"], ["Teleconsulta", "consultorios"], ["Planos de saúde / Reembolso", "planos"], ["Avaliações", "opinioes"], ["Dúvidas respondidas", "duvidas"], ["Perguntas frequentes", "faq"]]
     .forEach(function (x) { itensBusca.push({ t: x[0], sub: x[1] ? "Seção" : "Ação", acao: function () { if (x[1]) rolarPara(x[1]); else folhaSolicitar(); } }); });
   var sug = $("sugestoes"), inp = $("busca-topo-input"), achados = [];

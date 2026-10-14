@@ -492,3 +492,4 @@ ul { margin: 0; padding: 0; list-style: none; }
   .folha { border-radius: 22px 22px 0 0; max-width: none; max-height: 92vh; animation: subirFolha .25s ease-out; }
   @keyframes subirFolha { from { transform: translateY(100%); } }
 }
+.servicos-intro { margin: -6px 0 6px; }
