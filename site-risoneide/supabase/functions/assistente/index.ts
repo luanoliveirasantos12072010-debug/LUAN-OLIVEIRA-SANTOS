@@ -43,7 +43,7 @@ Valores (consulta particular, sem convênio):
 Serviços oferecidos: psicoterapia (individual, breve, de grupo e psicanalítica), terapia de casal, terapia familiar, orientação aos pais, tratamento da ansiedade, da depressão e da síndrome do pânico, consulta psicológica do adolescente, do adulto e do idoso, orientação vocacional e profissional, mudança de comportamento alimentar e teleconsulta. Terapia de casal e as consultas do adulto e do idoso também podem ser online.
 
 Pagamento e planos de saúde:
-- Formas de pagamento: PIX, dinheiro e depósito bancário. O site tem uma seção "Pagamento" onde a pessoa escolhe "Primeira consulta (R$ 280)" ou "Sessão ou pacote combinado" (digita o valor combinado), gera o QR Code PIX ou o código copia e cola, paga no app do banco e envia o comprovante pelo WhatsApp. A chave PIX é o celular (87) 98842-0716, em nome de Risoneide Gomes Xavier.
+- Formas de pagamento: PIX, dinheiro e depósito bancário. No site, a pessoa toca no serviço que quer, escolhe teleconsulta ou presencial, preenche os dados e escolhe entre "Finalizar e pagar pelo WhatsApp" ou "Pagar agora pelo site (PIX)", que gera o QR Code e o código copia e cola com o valor (primeira consulta: R$ 280; nos serviços com valor a combinar, ela digita o valor que já combinou). Depois envia o comprovante pelo WhatsApp. A chave PIX é o celular (87) 98842-0716, em nome de Risoneide Gomes Xavier.
 - Não atende diretamente por convênio. A consulta é particular e ela fornece recibo para a pessoa pedir reembolso ao plano de saúde; o valor reembolsado depende do contrato de cada plano.
 
 Agendamento:

@@ -52,13 +52,6 @@ window.DADOS = {
     chaveExibicao: "(87) 98842-0716", // como a chave aparece no site
     nome: "Risoneide Gomes Xavier",   // nome do recebedor (como está no banco)
     cidade: "Petrolina",
-    // valor: null = a pessoa digita o valor combinado com a psicóloga
-    planos: [
-      { id: "primeira", nome: "Primeira consulta", valor: 280,
-        detalhe: "Avaliação inicial, com duração maior, para planejar o trabalho." },
-      { id: "combinado", nome: "Sessão ou pacote combinado", valor: null,
-        detalhe: "Digite o valor que você combinou com a psicóloga." },
-    ],
   },
 
   pagamentos: ["PIX", "Dinheiro", "Depósito Bancário", "Reembolso do plano de saúde (com recibo)"],
@@ -84,28 +77,28 @@ window.DADOS = {
   // preco: texto da lista | precoModal: texto dentro de "Detalhes"
   // locais: "end" = consultório, "tele" = teleconsulta
   // Primeira consulta: a partir de R$ 280. Os demais valores são combinados com a psicóloga.
-  // preco: null aparece como "Valor a combinar".
+  // preco: texto mostrado | valor: número usado no QR Code PIX | preco: null = "Valor a combinar".
   servicos: [
-    { nome: "Primeira consulta", preco: "A partir de R$ 280", locais: ["end", "tele"],
+    { nome: "Primeira consulta", preco: "A partir de R$ 280", valor: 280, locais: ["end", "tele"],
       descricao: "A primeira consulta tem duração maior: é uma avaliação para conhecer sua história e planejar o trabalho a ser desenvolvido." },
-    { nome: "Psicoterapia adulto", preco: null, locais: ["end"] },
-    { nome: "Tratamento da depressão", preco: null, locais: ["end"] },
-    { nome: "Tratamento da ansiedade", preco: null, locais: ["end"] },
-    { nome: "Terapia Familiar", preco: null, locais: ["end"] },
-    { nome: "Terapia de Casal", preco: null, locais: ["end", "tele"] },
-    { nome: "Psicoterapia Psicanalítica", preco: null, locais: ["end"] },
-    { nome: "Psicoterapia de Grupo", preco: null, locais: ["end"] },
-    { nome: "Psicoterapia breve", preco: null, locais: ["end"] },
-    { nome: "Orientação Vocacional", preco: null, locais: ["end"] },
-    { nome: "Teleconsulta", preco: null, locais: ["tele"], temDescricao: true },
-    { nome: "Orientação profissional", preco: null, locais: ["end"] },
-    { nome: "Orientação aos pais", preco: null, locais: ["end"] },
-    { nome: "Mudança de comportamento alimentar", preco: null, locais: ["end"] },
-    { nome: "Consulta psicológica do idoso", preco: null, locais: ["tele", "end"] },
-    { nome: "Consulta psicológica do adulto", preco: null, locais: ["tele", "end"] },
-    { nome: "Consulta psicológica do adolescente", preco: null, locais: ["end"] },
-    { nome: "Psicoterapia", preco: null, locais: ["end"] },
-    { nome: "Tratamento da síndrome do pânico", preco: null, locais: ["end"] },
+    { nome: "Psicoterapia adulto", preco: null, descricao: "Acompanhamento psicológico individual para adultos, em sessões regulares.", locais: ["end"] },
+    { nome: "Tratamento da depressão", preco: null, descricao: "Acompanhamento psicológico para quem enfrenta tristeza persistente, desânimo e perda de interesse.", locais: ["end"] },
+    { nome: "Tratamento da ansiedade", preco: null, descricao: "Acompanhamento para preocupação excessiva, tensão, crises de ansiedade e medos que atrapalham a rotina.", locais: ["end"] },
+    { nome: "Terapia Familiar", preco: null, descricao: "Atendimento da família em conjunto, para melhorar a comunicação e lidar com conflitos.", locais: ["end"] },
+    { nome: "Terapia de Casal", preco: null, descricao: "Atendimento do casal em conjunto, para trabalhar conflitos, comunicação e a relação.", locais: ["end", "tele"] },
+    { nome: "Psicoterapia Psicanalítica", preco: null, descricao: "Psicoterapia de orientação psicanalítica, voltada ao autoconhecimento.", locais: ["end"] },
+    { nome: "Psicoterapia de Grupo", preco: null, descricao: "Sessões em grupo, conduzidas pela psicóloga, para troca de experiências e apoio mútuo.", locais: ["end"] },
+    { nome: "Psicoterapia breve", preco: null, descricao: "Psicoterapia com foco e duração definidos, voltada a uma questão específica.", locais: ["end"] },
+    { nome: "Orientação Vocacional", preco: null, descricao: "Avaliação e orientação para a escolha de curso e carreira.", locais: ["end"] },
+    { nome: "Teleconsulta", preco: null, descricao: "Atendimento psicológico online, por chamada de vídeo, de onde você estiver.", locais: ["tele"], temDescricao: true },
+    { nome: "Orientação profissional", preco: null, descricao: "Avaliação e orientação para decisões e mudanças na vida profissional.", locais: ["end"] },
+    { nome: "Orientação aos pais", preco: null, descricao: "Orientação para pais e responsáveis sobre questões da criação e da convivência com os filhos.", locais: ["end"] },
+    { nome: "Mudança de comportamento alimentar", preco: null, descricao: "Acompanhamento psicológico da relação com a comida e dos hábitos alimentares.", locais: ["end"] },
+    { nome: "Consulta psicológica do idoso", preco: null, descricao: "Atendimento psicológico voltado às questões da pessoa idosa.", locais: ["tele", "end"] },
+    { nome: "Consulta psicológica do adulto", preco: null, descricao: "Consulta psicológica individual para adultos.", locais: ["tele", "end"] },
+    { nome: "Consulta psicológica do adolescente", preco: null, descricao: "Atendimento psicológico para jovens a partir de 16 anos.", locais: ["end"] },
+    { nome: "Psicoterapia", preco: null, descricao: "Acompanhamento psicológico individual, em sessões regulares.", locais: ["end"] },
+    { nome: "Tratamento da síndrome do pânico", preco: null, descricao: "Acompanhamento para crises de pânico e o medo de que elas aconteçam novamente.", locais: ["end"] },
   ],
 
   // ---------------- OPINIÕES ----------------

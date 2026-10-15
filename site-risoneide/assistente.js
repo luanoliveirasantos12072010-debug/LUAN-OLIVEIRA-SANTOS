@@ -40,7 +40,7 @@
     }],
     [/onde|endereco|local|fica|chegar|consultorio|presencial|sala/, function () { return { t: "O consultório fica na R. Joaquim Nabuco, 541, 1º andar, sala 108, no Empresarial Trade Center Dom Campelo, em Petrolina (PE). Também há atendimento online.", acoes: ["mapa", "agendar"] }; }],
     [/plano|convenio|unimed|bradesco|amil|sulamerica|hapvida|reembols/, function () { return { t: "A consulta é particular, mas a " + D.primeiroNome + " fornece recibo para você pedir reembolso ao seu plano de saúde. O valor devolvido depende das regras do seu plano, então vale consultar antes.", acoes: ["whats"] }; }],
-    [/pagamento|pagar|pix|cartao|dinheiro|deposito|transferencia|parcel/, function () { return { t: "Ela aceita PIX, dinheiro e depósito bancário. Você pode pagar por PIX aqui mesmo no site, na seção \"Pagamento\": escolha a opção, gere o QR Code e depois envie o comprovante pelo WhatsApp.", acoes: ["pix", "whats"] }; }],
+    [/pagamento|pagar|pix|cartao|dinheiro|deposito|transferencia|parcel/, function () { return { t: "Ela aceita PIX, dinheiro e depósito bancário. Ao agendar um serviço aqui no site, você pode pagar na hora por PIX (QR Code ou copia e cola) ou finalizar e combinar o pagamento pelo WhatsApp.", acoes: ["agendar", "whats"] }; }],
     [/agend|marcar|horario|disponib|vaga|quando|dia /, function () { return { t: "Para agendar, fale com a " + D.primeiroNome + " pelo WhatsApp " + D.telefone + " ou toque em \"Agendar consulta\" e escolha o dia de sua preferência. Ela confirma o horário com você.", acoes: ["whats", "agendar"] }; }],
     [/ansiedade|ansios|panico|crise de|depress|triste|luto|perda|insonia|dormir|estresse|angustia|medo/, function () {
       return { t: "Sinto muito que você esteja passando por isso. A " + D.primeiroNome + " tem mais de 30 anos de experiência em saúde mental, trabalhando com ansiedade, transtorno de pânico, depressão e luto, e pode te ajudar na consulta.", acoes: ["agendar", "whats"] };
@@ -72,7 +72,6 @@
     return '<div class="msg-acoes">' + acoes.map(function (a) {
       if (a === "whats") return '<a class="a-whats" target="_blank" rel="noopener" href="' + S.linkWhats(MSG_WHATS) + '">Falar com a ' + S.esc(D.primeiroNome) + "</a>";
       if (a === "agendar") return '<button type="button" class="a-agendar" data-chat="agendar">Agendar consulta</button>';
-      if (a === "pix") return '<a class="a-agendar" href="#pagamento" data-chat="fechar">Pagar com PIX</a>';
       if (a === "tel188") return '<a class="a-tel" href="tel:188">Ligar 188 (CVV)</a>';
       if (a === "mapa") return '<a class="a-agendar" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(D.consultorios.end.mapa) + '">Ver no mapa</a>';
       return "";
