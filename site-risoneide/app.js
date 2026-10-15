@@ -212,131 +212,122 @@
       btnWhats("Tirar dúvidas no WhatsApp", "Olá, " + D.primeiroNome + "! Vim pelo seu site e tenho uma dúvida sobre reembolso do plano de saúde."));
   }
 
-  // =================== AGENDAR E PAGAR (passo a passo) ===================
-  var diaPreferido = "";
-  var PX = D.pix;
-  var ped = null; // pedido em andamento
-  var TURNOS = ["Qualquer horário", "Manhã", "Tarde", "Noite"];
-  function hojeISO() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  // =================== AGENDAR (dia e horário, como no Doctoralia) ===================
+  var PX = D.pix, AG = D.agenda;
+  var SEM = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"], MES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  var SEM_LONGO = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+  var cal = { pag: 0, mod: "Presencial" };   // estado do calendário (cartão e janela)
+  var ped = null;                            // agendamento em andamento
   function brl(v) { return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
-  function modalidadesDe(s) { return s.locais.map(function (c) { return c === "tele" ? "Teleconsulta" : "Presencial"; }); }
-  function valorTexto() {
-    var s = D.servicos[ped.servico];
-    return s.valor ? brl(s.valor) : A_COMBINAR;
+  function isoDe(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function dataDe(iso) { var p = iso.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function dataLonga(iso) { var d = dataDe(iso); return SEM_LONGO[d.getDay()] + ", " + d.getDate() + " de " + MES[d.getMonth()].toLowerCase(); }
+  function horariosDo(d) {
+    var limite = Date.now() + AG.antecedenciaHoras * 3600000;
+    return (AG.horarios[d.getDay()] || []).filter(function (h) {
+      var t = h.split(":"); var x = new Date(d); x.setHours(+t[0], +t[1], 0, 0); return x.getTime() >= limite;
+    });
   }
-  function etapas(n) {
-    return '<ol class="etapas">' + ["Serviço", "Seus dados", "Pagamento"].map(function (t, i) {
-      return '<li class="' + (i + 1 < n ? "feita" : i + 1 === n ? "atual" : "") + '"><span>' + (i + 1 < n ? "✓" : i + 1) + "</span>" + t + "</li>";
-    }).join("") + "</ol>";
+  function modsPermitidas() {
+    if (ped && ped.servico != null) return D.servicos[ped.servico].locais.map(function (c) { return c === "tele" ? "Teleconsulta" : "Presencial"; });
+    return ["Presencial", "Teleconsulta"];
   }
-  function cartaoModalidade(m) {
-    var on = ped.modalidade === m;
-    var sub = m === "Presencial" ? esc(LOCAIS.end.titulo) + " — " + esc(LOCAIS.end.local) : "Online, por chamada de vídeo, de onde você estiver";
-    return '<button type="button" class="opcao-radio" role="radio" aria-checked="' + on + '" data-mod="' + m + '"><span class="bolinha"></span>' +
-      '<span class="opcao-radio-icone">' + (m === "Presencial" ? I.local : I.video) + "</span><span><strong>" + m + "</strong><small>" + sub + "</small></span></button>";
+  function calendarioHTML() {
+    var mods = modsPermitidas(); if (mods.indexOf(cal.mod) === -1) cal.mod = mods[0];
+    var hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+    var colunas = "";
+    for (var i = cal.pag * 4; i < cal.pag * 4 + 4; i++) {
+      var d = new Date(hoje); d.setDate(hoje.getDate() + i);
+      var hs = horariosDo(d), iso = isoDe(d);
+      colunas += '<div class="cal-dia"><div class="cal-dia-cab"><b>' + (i === 0 ? "Hoje" : i === 1 ? "Amanhã" : SEM[d.getDay()]) + "</b><small>" + d.getDate() + " " + MES[d.getMonth()] + "</small></div>" +
+        (hs.length ? hs.map(function (h) { return '<button class="cal-hora" data-dia="' + iso + '" data-hora="' + h + '">' + h + "</button>"; }).join("") : '<span class="cal-vazio">—</span>') + "</div>";
+    }
+    return '<div class="cal-mods" role="tablist">' + mods.map(function (m) {
+        return '<button class="cal-mod" role="tab" aria-selected="' + (m === cal.mod) + '" data-mod="' + m + '">' + (m === "Presencial" ? I.local : I.video) + m + "</button>";
+      }).join("") + "</div>" +
+      '<p class="cal-local">' + (cal.mod === "Presencial" ? esc(LOCAIS.end.local) + " · Petrolina" : "Online, por chamada de vídeo") + "</p>" +
+      '<div class="cal-grade"><button class="seta cal-ant" aria-label="Dias anteriores"' + (cal.pag === 0 ? " disabled" : "") + '>‹</button><div class="cal-dias">' + colunas +
+      '</div><button class="seta cal-prox" aria-label="Próximos dias"' + ((cal.pag + 1) * 4 >= AG.dias ? " disabled" : "") + ">›</button></div>";
   }
-  function mensagemPedido(final) {
-    var s = D.servicos[ped.servico];
-    var dia = ped.dia ? ped.dia.split("-").reverse().join("/") : "a combinar";
-    return "Olá, " + D.primeiroNome + "! Vim pelo seu site e quero agendar.\n\n" +
-      "*Serviço:* " + s.nome + "\n*Modalidade:* " + ped.modalidade + (ped.modalidade === "Presencial" ? " (" + LOCAIS.end.local + ")" : "") +
-      "\n*Valor:* " + valorTexto() + "\n\n*Nome:* " + ped.nome + "\n*WhatsApp:* " + ped.tel + (ped.email ? "\n*E-mail:* " + ped.email : "") +
-      "\n*Dia de preferência:* " + dia + " (" + ped.turno + ")" + (ped.msg ? "\n*Mensagem:* " + ped.msg : "") + "\n\n" + final;
-  }
+  function pintarCalendarios() { document.querySelectorAll(".cal").forEach(function (c) { c.innerHTML = calendarioHTML(); }); }
+  document.addEventListener("click", function (e) {
+    var c = e.target.closest(".cal"); if (!c) return;
+    var b;
+    if ((b = e.target.closest(".cal-mod"))) { cal.mod = b.dataset.mod; pintarCalendarios(); }
+    else if (e.target.closest(".cal-ant")) { cal.pag = Math.max(0, cal.pag - 1); pintarCalendarios(); }
+    else if (e.target.closest(".cal-prox")) { cal.pag++; pintarCalendarios(); }
+    else if ((b = e.target.closest(".cal-hora"))) {
+      if (!ped || c.dataset.cal === "card") ped = { servico: null, nome: ped ? ped.nome : "", tel: ped ? ped.tel : "", email: ped ? ped.email : "", ok: ped ? ped.ok : false };
+      ped.dia = b.dataset.dia; ped.hora = b.dataset.hora; ped.mod = cal.mod;
+      passoDados();
+    }
+  });
 
+  // Abre a janela com o calendário. servicoIdx (opcional) só vai junto na mensagem.
   function agendar(servicoIdx, modalidade) {
-    var i = servicoIdx === undefined || servicoIdx === "" || isNaN(+servicoIdx) ? 0 : +servicoIdx;
-    var s = D.servicos[i], mods = modalidadesDe(s);
-    var anterior = ped || {};
-    ped = { servico: i, modalidade: mods.indexOf(modalidade) !== -1 ? modalidade : mods[0], nome: anterior.nome || "", tel: anterior.tel || "",
-      email: anterior.email || "", dia: diaPreferido || anterior.dia || "", turno: anterior.turno || TURNOS[0], msg: "" };
-    passo1();
+    var i = servicoIdx === undefined || servicoIdx === "" || isNaN(+servicoIdx) ? null : +servicoIdx;
+    var antes = ped || {};
+    ped = { servico: i, nome: antes.nome || "", tel: antes.tel || "", email: antes.email || "", ok: antes.ok };
+    if (modalidade) cal.mod = modalidade;
+    var s = i == null ? null : D.servicos[i];
+    abrirFolha(s ? "Agendar: " + s.nome : "Agende sua consulta",
+      '<p class="cinza" style="margin-bottom:14px">Escolha o dia e o horário. ' + esc(D.primeiroNome) + " confirma com você pelo WhatsApp.</p>" +
+      '<div class="cal" data-cal="folha">' + calendarioHTML() + "</div>" +
+      (D.whatsapp ? '<p class="cal-rodape">Não encontrou um horário bom? <a class="link-verde" target="_blank" rel="noopener" href="' + linkWhats(MSG_PADRAO) + '">Fale pelo WhatsApp</a></p>' : ""));
   }
 
-  function passo1() {
-    var s = D.servicos[ped.servico], mods = modalidadesDe(s);
-    if (mods.indexOf(ped.modalidade) === -1) ped.modalidade = mods[0];
-    var opts = D.servicos.map(function (x, i) { return '<option value="' + i + '"' + (i === ped.servico ? " selected" : "") + ">" + esc(x.nome) + "</option>"; }).join("");
-    var h = etapas(1) +
-      '<label class="rotulo" for="ck-serv">Serviço</label><select class="f-select" id="ck-serv">' + opts + "</select>" +
-      '<div class="ck-servico"><strong>' + esc(s.nome) + "</strong>" + (s.descricao ? "<p>" + esc(s.descricao) + "</p>" : "") +
-      '<div class="ck-valor"><span>Valor</span><b>' + (s.preco ? esc(s.preco) : A_COMBINAR) + "</b></div>" +
-      (s.valor ? "" : '<p class="ck-nota">O valor deste serviço é combinado diretamente com a psicóloga.</p>') + "</div>" +
-      '<p class="rotulo">Como você prefere ser atendido(a)?</p><div class="opcoes-radio" role="radiogroup" aria-label="Modalidade">' + mods.map(cartaoModalidade).join("") + "</div>" +
-      '<button class="btn btn-verde btn-largo" id="ck-1">Continuar</button>';
-    abrirFolha("Agendar: " + s.nome, h, function (c) {
-      c.querySelector("#ck-serv").onchange = function () { ped.servico = +this.value; passo1(); };
-      c.querySelectorAll(".opcao-radio").forEach(function (b) {
-        b.onclick = function () { ped.modalidade = b.dataset.mod; c.querySelectorAll(".opcao-radio").forEach(function (x) { x.setAttribute("aria-checked", String(x === b)); }); };
-      });
-      c.querySelector("#ck-1").onclick = passo2;
-    });
+  function resumoHorario() {
+    return '<div class="ag-escolha"><span class="ag-escolha-icone">' + (ped.mod === "Presencial" ? I.local : I.video) + "</span><div><b>" + esc(dataLonga(ped.dia)) + " · " + esc(ped.hora) + "</b><small>" +
+      esc(ped.mod === "Presencial" ? "Presencial — " + LOCAIS.end.local : "Teleconsulta (online)") + (ped.servico != null ? " · " + esc(D.servicos[ped.servico].nome) : "") +
+      '</small></div><button class="link-btn link" id="ag-trocar">Trocar</button></div>';
   }
-
-  function passo2() {
-    var h = etapas(2) +
-      '<div class="ck-como"><strong>Como funciona</strong><ol>' +
-      "<li>Você preenche seus dados e escolhe como pagar.</li>" +
-      "<li>Os dados chegam no WhatsApp de " + esc(D.primeiroNome) + ", que confirma com você o dia e o horário.</li>" +
-      (D.servicos[ped.servico].valor
-        ? "<li>O pagamento pode ser feito agora, por PIX aqui no site, ou combinado pelo WhatsApp. Você recebe recibo para pedir reembolso ao plano de saúde.</li>"
-        : "<li>O valor deste serviço é combinado com a psicóloga pelo WhatsApp, junto com o horário. Você recebe recibo para pedir reembolso ao plano de saúde.</li>") + "</ol></div>" +
-      '<form class="form" id="ck-form" novalidate>' +
-      '<label for="ck-nome">Seu nome *</label><input type="text" id="ck-nome" autocomplete="name" value="' + esc(ped.nome) + '">' +
-      '<div class="duas"><div><label for="ck-tel">WhatsApp *</label><input type="tel" id="ck-tel" autocomplete="tel" placeholder="(87) 99999-9999" value="' + esc(ped.tel) + '"></div>' +
-      '<div><label for="ck-email">E-mail <em>(opcional)</em></label><input type="email" id="ck-email" autocomplete="email" value="' + esc(ped.email) + '"></div></div>' +
-      '<div class="duas"><div><label for="ck-dia">Dia de preferência</label><input type="date" id="ck-dia" min="' + hojeISO() + '" value="' + esc(ped.dia) + '"></div>' +
-      '<div><label for="ck-turno">Horário de preferência</label><select id="ck-turno">' + TURNOS.map(function (t) { return "<option" + (t === ped.turno ? " selected" : "") + ">" + t + "</option>"; }).join("") + "</select></div></div>" +
-      '<label for="ck-msg">Mensagem <em>(opcional)</em></label><textarea id="ck-msg" rows="3" placeholder="Se quiser, conte brevemente o que você procura.">' + esc(ped.msg) + "</textarea>" +
-      '<label class="check"><input type="checkbox" id="ck-ok"' + (ped.ok ? " checked" : "") + '> <span>Concordo com a <a href="#" data-acao="privacidade">política de privacidade</a>.</span></label>' +
-      '<p class="form-erro" id="ck-erro" hidden></p>' +
-      '<div class="ck-botoes"><button type="button" class="btn btn-bege" id="ck-voltar">Voltar</button><button type="submit" class="btn btn-verde">Continuar</button></div></form>';
-    abrirFolha("Seus dados", h, function (c) {
-      function guardarCampos() {
-        ped.nome = c.querySelector("#ck-nome").value.trim(); ped.tel = c.querySelector("#ck-tel").value.trim();
-        ped.email = c.querySelector("#ck-email").value.trim(); ped.dia = c.querySelector("#ck-dia").value;
-        ped.turno = c.querySelector("#ck-turno").value; ped.msg = c.querySelector("#ck-msg").value.trim(); ped.ok = c.querySelector("#ck-ok").checked;
+  function passoDados() {
+    var h = resumoHorario() +
+      '<form class="form" id="ag-form" novalidate>' +
+      '<label for="ag-nome">Seu nome *</label><input type="text" id="ag-nome" autocomplete="name" value="' + esc(ped.nome || "") + '">' +
+      '<label for="ag-tel">WhatsApp *</label><input type="tel" id="ag-tel" autocomplete="tel" placeholder="(87) 99999-9999" value="' + esc(ped.tel || "") + '">' +
+      '<label for="ag-email">E-mail <em>(opcional)</em></label><input type="email" id="ag-email" autocomplete="email" value="' + esc(ped.email || "") + '">' +
+      '<label class="check"><input type="checkbox" id="ag-ok"' + (ped.ok ? " checked" : "") + '> <span>Concordo com a <a href="#" data-acao="privacidade">política de privacidade</a>.</span></label>' +
+      '<p class="form-erro" id="ag-erro" hidden></p>' +
+      '<button type="submit" class="btn btn-whats btn-largo">' + I.whats + "Confirmar agendamento</button></form>" +
+      '<p class="cal-rodape">Ao confirmar, abrimos o WhatsApp com seu pedido para ' + esc(D.primeiroNome) + " confirmar o horário.</p>";
+    abrirFolha("Confirme seus dados", h, function (c) {
+      function guardar() {
+        ped.nome = c.querySelector("#ag-nome").value.trim(); ped.tel = c.querySelector("#ag-tel").value.trim();
+        ped.email = c.querySelector("#ag-email").value.trim(); ped.ok = c.querySelector("#ag-ok").checked;
       }
-      c.querySelector("#ck-voltar").onclick = function () { guardarCampos(); passo1(); };
-      c.querySelector('[data-acao="privacidade"]').addEventListener("click", guardarCampos);
-      c.querySelector("#ck-form").onsubmit = function (e) {
-        e.preventDefault(); guardarCampos();
-        var erro = c.querySelector("#ck-erro");
+      c.querySelector("#ag-trocar").onclick = function () { guardar(); agendar(ped.servico); };
+      c.querySelector('[data-acao="privacidade"]').addEventListener("click", guardar);
+      c.querySelector("#ag-form").onsubmit = function (e) {
+        e.preventDefault(); guardar();
         var falta = ped.nome.length < 2 ? "Escreva seu nome." : ped.tel.replace(/\D/g, "").length < 10 ? "Escreva seu WhatsApp com DDD." : !ped.ok ? "Marque que concorda com a política de privacidade." : "";
-        if (falta) { erro.textContent = falta; erro.hidden = false; return; }
-        passo3();
+        if (falta) { var er = c.querySelector("#ag-erro"); er.textContent = falta; er.hidden = false; return; }
+        window.open(linkWhats(mensagemAgendamento("Pode confirmar, por favor?")), "_blank", "noopener");
+        passoEnviado();
       };
     });
   }
-
-  function passo3() {
-    var s = D.servicos[ped.servico];
-    var dia = ped.dia ? ped.dia.split("-").reverse().join("/") : "A combinar";
-    var linhas = [["Serviço", s.nome], ["Modalidade", ped.modalidade + (ped.modalidade === "Presencial" ? " — " + LOCAIS.end.local : "")],
-      ["Dia de preferência", dia + " · " + ped.turno], ["Nome", ped.nome], ["WhatsApp", ped.tel]];
-    if (ped.email) linhas.push(["E-mail", ped.email]);
-    var h = etapas(3) +
-      '<div class="ck-resumo">' + linhas.map(function (l) { return "<div><span>" + l[0] + "</span><b>" + esc(l[1]) + "</b></div>"; }).join("") +
-      '<div class="ck-total"><span>Valor</span><b>' + (s.valor ? esc(brl(s.valor)) : A_COMBINAR) + "</b></div>" +
-      (s.valor ? '<p class="ck-nota">' + esc(s.descricao || "") + "</p>" : '<p class="ck-nota">O valor deste serviço é combinado com a psicóloga pelo WhatsApp.</p>') + "</div>" +
-      (s.valor ? '<p class="rotulo">Como você quer finalizar?</p>' : "") +
-      (D.whatsapp ? '<button class="opcao-pag" id="ck-whats"><span class="opcao-pag-icone whats">' + I.whats + "</span><span><strong>" +
-        (s.valor ? "Finalizar e pagar pelo WhatsApp" : "Combinar o valor e agendar pelo WhatsApp") + "</strong>" +
-        "<small>Envia seus dados para a " + esc(D.primeiroNome) + " e vocês combinam " + (s.valor ? "o horário e o pagamento" : "o valor e o horário") + " por lá.</small></span></button>" : "") +
-      (s.valor ? '<button class="opcao-pag" id="ck-pix"><span class="opcao-pag-icone pix">' + I.pix + "</span><span><strong>Pagar agora pelo site (PIX)</strong>" +
-        "<small>Gera o QR Code de " + esc(brl(s.valor)) + " para você pagar no app do seu banco.</small></span></button>" : "") +
-      '<button class="btn btn-bege btn-largo" id="ck-voltar">Voltar</button>';
-    abrirFolha("Resumo e pagamento", h, function (c) {
-      c.querySelector("#ck-voltar").onclick = passo2;
-      var w = c.querySelector("#ck-whats");
-      if (w) w.onclick = function () {
-        var fim = s.valor ? "Gostaria de confirmar o horário e combinar o pagamento por aqui." : "Gostaria de combinar o valor e o horário por aqui.";
-        window.open(linkWhats(mensagemPedido(fim)), "_blank", "noopener");
-        fecharFolha(); toast("Abrimos o WhatsApp com seus dados. É só enviar a mensagem!");
-      };
-      var px = c.querySelector("#ck-pix");
-      if (px) px.onclick = function () { passo4(s.valor); };
-    });
+  function mensagemAgendamento(final) {
+    var d = dataDe(ped.dia);
+    return "Olá, " + D.primeiroNome + "! Quero agendar uma consulta pelo site.\n\n" +
+      "*Dia:* " + SEM_LONGO[d.getDay()] + ", " + ped.dia.split("-").reverse().join("/") + "\n*Horário:* " + ped.hora +
+      "\n*Modalidade:* " + (ped.mod === "Presencial" ? "Presencial (" + LOCAIS.end.local + ")" : "Teleconsulta (online)") +
+      (ped.servico != null ? "\n*Serviço:* " + D.servicos[ped.servico].nome : "") +
+      "\n\n*Nome:* " + ped.nome + "\n*WhatsApp:* " + ped.tel + (ped.email ? "\n*E-mail:* " + ped.email : "") + "\n\n" + final;
+  }
+  function passoEnviado() {
+    var prim = D.servicos[0];
+    abrirFolha("Pedido enviado!",
+      '<div class="ag-ok-icone">' + I.check + "</div>" + resumoHorario().replace('<button class="link-btn link" id="ag-trocar">Trocar</button>', "") +
+      "<p>Abrimos o WhatsApp com o seu pedido. <strong>É só enviar a mensagem</strong> — " + esc(D.primeiroNome) + " confirma o horário com você.</p>" +
+      (D.whatsapp ? '<a class="btn btn-whats btn-largo" target="_blank" rel="noopener" href="' + linkWhats(mensagemAgendamento("Pode confirmar, por favor?")) + '">' + I.whats + "Abrir o WhatsApp de novo</a>" : "") +
+      (prim.valor ? '<div class="ag-pix-oferta"><p><strong>É a sua primeira consulta?</strong> Se quiser, você já pode pagar por PIX (' + esc(brl(prim.valor)) + ").</p>" +
+        '<button class="btn btn-bege btn-largo" id="ag-pix">' + I.pix + "Pagar primeira consulta por PIX</button></div>" : "") +
+      '<button class="btn btn-verde btn-largo" id="ag-fechar">Fechar</button>',
+      function (c) {
+        var px = c.querySelector("#ag-pix"); if (px) px.onclick = function () { pagarPix(prim.valor); };
+        c.querySelector("#ag-fechar").onclick = fecharFolha;
+      });
   }
 
   function copiar(texto, msg) {
@@ -348,25 +339,24 @@
     }
     if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(texto).then(ok, velho); else velho();
   }
-  function passo4(valor) {
-    var s = D.servicos[ped.servico];
+  function pagarPix(valor) {
     var codigo = window.PIX.brCode({ chave: PX.chave, nome: PX.nome, cidade: PX.cidade, valor: valor });
     var qr = window.qrcode(0, "M"); qr.addData(codigo); qr.make();
-    var msgFinal = mensagemPedido("Fiz o pagamento de " + brl(valor) + " por PIX pelo site. Segue o comprovante:");
-    abrirFolha("Pagar com PIX", etapas(3) +
-      '<div class="pix-caixa"><p class="pix-valor-grande">' + esc(brl(valor)) + '</p><p class="cinza">' + esc(s.nome) + " · " + esc(ped.modalidade) + "</p>" +
+    var msgFinal = mensagemAgendamento("Fiz o pagamento da primeira consulta (" + brl(valor) + ") por PIX pelo site. Segue o comprovante:");
+    abrirFolha("Pagar com PIX",
+      '<div class="pix-caixa"><p class="pix-valor-grande">' + esc(brl(valor)) + '</p><p class="cinza">Primeira consulta</p>' +
       '<div class="pix-qr"><img alt="QR Code PIX de ' + esc(brl(valor)) + '" src="' + qr.createDataURL(6, 2) + '"></div>' +
       '<p class="pix-dados">Recebedor: <strong>' + esc(PX.nome) + "</strong><br>Chave PIX: " + esc(PX.chaveExibicao) + "</p>" +
       '<p style="margin:14px 0 6px;font-weight:500">PIX copia e cola</p><textarea class="pix-codigo" id="pix-codigo" rows="3" readonly>' + esc(codigo) + "</textarea>" +
       '<button class="btn btn-verde btn-largo" id="pix-copiar">Copiar código PIX</button>' +
       '<ol class="pix-passos"><li>Abra o app do seu banco e escolha <strong>Pix → Pagar com QR Code</strong> ou <strong>Pix copia e cola</strong>.</li>' +
-      "<li>Confira o nome do recebedor e o valor, e pague.</li><li>Toque no botão abaixo para enviar o comprovante e seus dados no WhatsApp.</li></ol>" +
+      "<li>Confira o nome do recebedor e o valor, e pague.</li><li>Toque no botão abaixo para enviar o comprovante no WhatsApp.</li></ol>" +
       (D.whatsapp ? '<a class="btn btn-whats btn-largo" id="pix-enviar" target="_blank" rel="noopener" href="' + linkWhats(msgFinal) + '">' + I.whats + "Já paguei — enviar comprovante</a>" : "") +
       '<button class="btn btn-bege btn-largo" id="pix-voltar">Voltar</button></div>',
       function (c) {
         c.querySelector("#pix-copiar").onclick = function () { copiar(codigo, "Código PIX copiado! Cole no app do seu banco."); };
         c.querySelector("#pix-codigo").onclick = function () { this.select(); };
-        c.querySelector("#pix-voltar").onclick = passo3;
+        c.querySelector("#pix-voltar").onclick = passoEnviado;
         var env = c.querySelector("#pix-enviar");
         if (env) env.addEventListener("click", function () { setTimeout(function () { fecharFolha(); toast("Obrigado! Envie o comprovante na conversa do WhatsApp."); }, 300); });
       });
@@ -377,7 +367,7 @@
       " entre em contato com você sobre o atendimento. Eles não são compartilhados com terceiros e são tratados com sigilo profissional.</p>" +
       "<p>Nas avaliações, apenas o nome que você escolher e o texto da avaliação ficam públicos.</p>" +
       '<button class="btn btn-bege btn-largo" id="priv-voltar">Voltar</button>', function (c) {
-        c.querySelector("#priv-voltar").onclick = function () { if (ped) passo2(); else fecharFolha(); };
+        c.querySelector("#priv-voltar").onclick = function () { if (ped && ped.dia) passoDados(); else fecharFolha(); };
       });
   }
 
@@ -539,24 +529,8 @@
   pintarFaqMedia();
   var _pr = pintarResumo; pintarResumo = function () { _pr(); pintarFaqMedia(); };
 
-  // =================== AGENDA ===================
-  var SEM = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"], MES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-  var pagDias = 0;
-  function pintarDias() {
-    var hoje = new Date(); hoje.setHours(0, 0, 0, 0); var h = "";
-    for (var i = pagDias * 4; i < pagDias * 4 + 4; i++) {
-      var d = new Date(hoje); d.setDate(hoje.getDate() + i);
-      var iso = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-      h += '<button class="dia" data-dia="' + iso + '">' + (i === 0 ? "Hoje" : i === 1 ? "Amanhã" : SEM[d.getDay()]) + "<small>" + d.getDate() + " " + MES[d.getMonth()] + "</small></button>";
-    }
-    $("dias").innerHTML = h;
-    $("dias-ant").disabled = pagDias === 0;
-    $("dias-prox").disabled = pagDias >= 6;
-  }
-  $("dias-ant").onclick = function () { pagDias--; pintarDias(); };
-  $("dias-prox").onclick = function () { pagDias++; pintarDias(); };
-  $("dias").onclick = function (e) { var b = e.target.closest(".dia"); if (b) { diaPreferido = b.dataset.dia; agendar(); } };
-  pintarDias();
+  // =================== AGENDA (cartão lateral) ===================
+  pintarCalendarios();
   var agenda = $("agenda"), lateral = document.querySelector(".coluna-lateral"), slot = document.querySelector(".agenda-mobile");
   var mq = window.matchMedia("(max-width: 860px)");
   function posAgenda() { (mq.matches ? slot : lateral).appendChild(agenda); }
@@ -619,7 +593,7 @@
     abrirFolha("Ficou com alguma dúvida?", '<p class="cinza">Fale com o nosso assistente virtual ou comigo mesma.</p><div class="opcoes-duvida" style="grid-template-columns:1fr">' + opcoesDuvida() + "</div>");
   }
 
-  window.SITE = { abrirFolha: abrirFolha, fecharFolha: fecharFolha, linkWhats: linkWhats, folhaSolicitar: function () { diaPreferido = ""; agendar(); }, toast: toast, esc: esc };
+  window.SITE = { abrirFolha: abrirFolha, fecharFolha: fecharFolha, linkWhats: linkWhats, folhaSolicitar: function () { agendar(); }, toast: toast, esc: esc };
 
   // =================== AÇÕES ===================
   var ACOES = {
@@ -630,8 +604,8 @@
     "ir-opinioes": function () { rolarPara("opinioes"); },
     "formacao": function () { abrirFolha("Formação", lista(D.formacao)); },
     "contato": function () { folhaContato(); },
-    "solicitar": function (b) { if (!b.closest(".agenda")) diaPreferido = ""; agendar(b.dataset.servico, b.dataset.modalidade); },
-    "servico": function (b) { diaPreferido = ""; agendar(+b.dataset.i); },
+    "solicitar": function (b) { agendar(b.dataset.servico, b.dataset.modalidade); },
+    "servico": function (b) { agendar(+b.dataset.i); },
     "detalhes-endereco": function () { folhaEndereco(localAtual); },
     "planos": folhaPlanos,
     "privacidade": folhaPrivacidade,

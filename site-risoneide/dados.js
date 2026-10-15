@@ -46,6 +46,21 @@ window.DADOS = {
     { icone: "crianca", texto: "Crianças a partir dos 16 anos de idade" },
   ],
   idiomas: ["Português"],
+  // AGENDA ONLINE (como no Doctoralia: a pessoa escolhe dia e horário)
+  // CONFIRMAR COM A RISONEIDE: horários de atendimento por dia da semana.
+  // 0 = domingo, 1 = segunda, ..., 6 = sábado. Dia sem horário = não atende.
+  agenda: {
+    horarios: {
+      1: ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"],
+      2: ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"],
+      3: ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"],
+      4: ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"],
+      5: ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"],
+    },
+    antecedenciaHoras: 3, // não mostra horários que começam em menos de 3 horas
+    dias: 28,             // quantos dias para frente aparecem
+  },
+
   // PAGAMENTO PELO SITE (PIX com QR Code)
   pix: {
     chave: "+5587988420716",          // chave PIX (telefone, com +55)

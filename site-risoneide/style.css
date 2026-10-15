@@ -420,6 +420,34 @@ ul { margin: 0; padding: 0; list-style: none; }
 .opcao-pag-icone.whats { background: #25d366; }
 .opcao-pag-icone.pix { background: #32bcad; }
 
+/* ---------- CALENDÁRIO (dia e horário) ---------- */
+.cal-mods { display: flex; background: var(--fundo); border-radius: 999px; padding: 4px; gap: 4px; }
+.cal-mod { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: none; border: 0; border-radius: 999px; padding: 8px 10px; font-size: 14px; color: var(--cinza); }
+.cal-mod svg { width: 16px; height: 16px; }
+.cal-mod[aria-selected="true"] { background: var(--verde); color: #fff; font-weight: 500; }
+.cal-local { text-align: center; font-size: 12px; color: var(--cinza); margin: 8px 0 10px; }
+.cal-grade { display: flex; align-items: flex-start; gap: 2px; }
+.cal-grade .seta { margin-top: 6px; }
+.cal-dias { flex: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.cal-dia { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+.cal-dia-cab { text-align: center; font-size: 13px; line-height: 1.2; margin-bottom: 2px; }
+.cal-dia-cab b { display: block; font-weight: 500; }
+.cal-dia-cab small { color: var(--cinza); font-size: 11px; }
+.cal-hora { background: var(--verde-claro); color: var(--verde-escuro); border: 0; border-radius: 10px; padding: 8px 0; font-size: 14px; font-weight: 500; }
+.cal-hora:hover { background: var(--verde); color: #fff; }
+.cal-vazio { text-align: center; color: var(--cinza-claro); padding: 8px 0; }
+.cal-rodape { text-align: center; font-size: 13px; color: var(--cinza); margin: 12px 0 0 !important; }
+.ag-escolha { display: flex; align-items: center; gap: 12px; background: var(--verde-claro); border-radius: 16px; padding: 12px 14px; margin-bottom: 6px; }
+.ag-escolha-icone { width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--verde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ag-escolha-icone svg { width: 20px; height: 20px; }
+.ag-escolha div { flex: 1; min-width: 0; }
+.ag-escolha b { display: block; font-weight: 500; }
+.ag-escolha small { color: var(--cinza); }
+.ag-ok-icone { width: 64px; height: 64px; border-radius: 50%; background: var(--verde); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+.ag-ok-icone svg { width: 34px; height: 34px; }
+.ag-pix-oferta { background: var(--fundo); border-radius: 16px; padding: 14px 16px; margin-top: 16px; }
+.ag-pix-oferta p { margin: 0 !important; }
+
 /* ---------- DÚVIDAS: ESCOLHA + CHAT ---------- */
 .duvida-flutuante {
   position: fixed; right: 22px; bottom: 76px; z-index: 55; display: flex; align-items: center; gap: 10px;
