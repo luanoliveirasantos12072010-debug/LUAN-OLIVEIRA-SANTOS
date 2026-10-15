@@ -402,7 +402,7 @@
     ["Quais são as principais especialidades de " + N + "?", esc(N) + " é psicóloga, formada pela UNICAP e especialista em psicologia clínica, saúde mental e organizacional, com mais de 30 anos de experiência. Trabalha com " + esc(D.experienciaEm.join(", ").toLowerCase()) + "."],
     ["Onde fica o consultório de " + N + "?", esc(N) + " atende em:<ul><li>" + esc(LOCAIS.end.titulo) + " — " + esc(LOCAIS.end.local) + "</li><li>Teleconsulta (online)</li></ul>"],
     ["Posso ser atendido online, sem ter que ir até o consultório?", "Sim. " + esc(N) + " atende por teleconsulta, por chamada de vídeo. <button class=\"link-btn link-verde\" data-acao=\"solicitar\" data-modalidade=\"Teleconsulta\">Agendar teleconsulta</button>"],
-    ["Quais métodos de pagamento são aceitos?", esc(D.pagamentos.join(", ")) + "."],
+    ["Quais métodos de pagamento são aceitos?", esc(D.pagamentos.join(", ")) + ". Você pode pagar por PIX direto aqui no site: <a class=\"link-verde\" href=\"#pagamento\">gerar QR Code PIX</a>."],
     ["Em quais idiomas " + N + " atende?", esc(N) + " atende em " + esc(D.idiomas.join(", ")) + "."],
     ["Como posso marcar uma consulta?", "Pelo WhatsApp " + esc(D.telefone) + " (<a class=\"link-verde\" target=\"_blank\" rel=\"noopener\" href=\"" + linkWhats(MSG_PADRAO) + "\">clique aqui para chamar</a>) ou tocando em <button class=\"link-btn link-verde\" data-acao=\"solicitar\">Agendar consulta</button> e escolhendo o dia de sua preferência."],
     ["O que outros pacientes dizem sobre " + N + "?", '<span id="faq-media"></span>'],
@@ -485,6 +485,70 @@
   function abrirMenu(on) { menu.hidden = !on; menuBtn.setAttribute("aria-expanded", String(on)); document.body.classList.toggle("travado", on); }
   menuBtn.onclick = function () { abrirMenu(true); };
   menu.addEventListener("click", function (e) { if (e.target === menu || e.target.closest("[data-fechar-menu]")) abrirMenu(false); });
+
+  // =================== PAGAMENTO (PIX) ===================
+  var PX = D.pix, planoPix = PX.planos[0].id;
+  function brl(v) { return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
+  function lerValor(txt) {
+    var n = Number(String(txt).replace(/[^\d,.-]/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", "."));
+    return isFinite(n) ? Math.round(n * 100) / 100 : NaN;
+  }
+  $("pix-recebedor").textContent = PX.nome;
+  $("pix-chave-txt").textContent = PX.chaveExibicao;
+  function pintarPlanosPix() {
+    $("planos-pix").innerHTML = PX.planos.map(function (p) {
+      return '<button type="button" class="plano-pix" role="radio" aria-checked="' + (p.id === planoPix) + '" data-plano="' + esc(p.id) + '">' +
+        '<span class="bolinha"></span><span><strong>' + esc(p.nome) + "</strong><small>" + esc(p.detalhe) + "</small></span>" +
+        '<span class="plano-valor">' + (p.valor ? esc(brl(p.valor)) : "Outro valor") + "</span></button>";
+    }).join("");
+    var atual = PX.planos.filter(function (p) { return p.id === planoPix; })[0];
+    $("pix-outro").hidden = !!atual.valor;
+  }
+  $("planos-pix").addEventListener("click", function (e) {
+    var b = e.target.closest(".plano-pix"); if (!b) return;
+    planoPix = b.dataset.plano; $("pix-erro").hidden = true; pintarPlanosPix();
+    if (!$("pix-outro").hidden) $("pix-valor").focus();
+  });
+  pintarPlanosPix();
+
+  function copiar(texto, msg) {
+    function ok() { toast(msg); }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(texto).then(ok, velho); else velho();
+    function velho() {
+      var t = document.createElement("textarea"); t.value = texto; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select(); try { document.execCommand("copy"); ok(); } catch (e) { toast("Não foi possível copiar. Selecione o código e copie manualmente."); }
+      t.remove();
+    }
+  }
+  function folhaPix(plano, valor) {
+    var codigo = window.PIX.brCode({ chave: PX.chave, nome: PX.nome, cidade: PX.cidade, valor: valor });
+    var qr = window.qrcode(0, "M"); qr.addData(codigo); qr.make();
+    var msgComprovante = "Olá, " + D.primeiroNome + "! Fiz um pagamento por PIX pelo site.\nReferente a: " + plano.nome + "\nValor: " + brl(valor) + "\nSegue o comprovante:";
+    abrirFolha("Pagar com PIX",
+      '<div class="pix-caixa"><p class="pix-valor-grande">' + esc(brl(valor)) + '</p><p class="cinza">' + esc(plano.nome) + "</p>" +
+      '<div class="pix-qr"><img alt="QR Code PIX de ' + esc(brl(valor)) + '" src="' + qr.createDataURL(6, 2) + '"></div>' +
+      '<p class="pix-dados">Recebedor: <strong>' + esc(PX.nome) + "</strong><br>Chave PIX: " + esc(PX.chaveExibicao) + "</p>" +
+      '<p style="margin:14px 0 6px;font-weight:500">PIX copia e cola</p><textarea class="pix-codigo" id="pix-codigo" rows="3" readonly>' + esc(codigo) + "</textarea>" +
+      '<button class="btn btn-verde btn-largo" id="pix-copiar">Copiar código PIX</button>' +
+      '<button class="btn btn-bege btn-largo" id="pix-copiar-chave">Copiar só a chave</button>' +
+      '<ol class="pix-passos"><li>Abra o app do seu banco e escolha <strong>Pix → Pagar com QR Code</strong> ou <strong>Pix copia e cola</strong>.</li>' +
+      "<li>Confira o nome do recebedor e o valor.</li><li>Depois de pagar, envie o comprovante pelo WhatsApp.</li></ol>" +
+      (D.whatsapp ? '<a class="btn btn-whats btn-largo" target="_blank" rel="noopener" href="' + linkWhats(msgComprovante) + '">' + I.whats + "Enviar comprovante no WhatsApp</a>" : "") +
+      "</div>",
+      function (c) {
+        c.querySelector("#pix-copiar").onclick = function () { copiar(codigo, "Código PIX copiado! Cole no app do seu banco."); };
+        c.querySelector("#pix-copiar-chave").onclick = function () { copiar(PX.chave, "Chave PIX copiada!"); };
+        c.querySelector("#pix-codigo").onclick = function () { this.select(); };
+      });
+  }
+  $("btn-gerar-pix").addEventListener("click", function () {
+    var plano = PX.planos.filter(function (p) { return p.id === planoPix; })[0], erro = $("pix-erro");
+    var valor = plano.valor || lerValor($("pix-valor").value);
+    if (!(valor >= 1 && valor <= 50000)) { erro.textContent = "Digite o valor combinado, por exemplo 200,00."; erro.hidden = false; $("pix-valor").focus(); return; }
+    erro.hidden = true;
+    folhaPix(plano, valor);
+  });
+  $("pix-valor").addEventListener("keydown", function (e) { if (e.key === "Enter") $("btn-gerar-pix").click(); });
 
   // =================== FICOU COM DÚVIDA? ===================
   function opcoesDuvida() {

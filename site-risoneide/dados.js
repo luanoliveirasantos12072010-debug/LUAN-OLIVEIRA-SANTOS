@@ -46,6 +46,21 @@ window.DADOS = {
     { icone: "crianca", texto: "Crianças a partir dos 16 anos de idade" },
   ],
   idiomas: ["Português"],
+  // PAGAMENTO PELO SITE (PIX com QR Code)
+  pix: {
+    chave: "+5587988420716",          // chave PIX (telefone, com +55)
+    chaveExibicao: "(87) 98842-0716", // como a chave aparece no site
+    nome: "Risoneide Gomes Xavier",   // nome do recebedor (como está no banco)
+    cidade: "Petrolina",
+    // valor: null = a pessoa digita o valor combinado com a psicóloga
+    planos: [
+      { id: "primeira", nome: "Primeira consulta", valor: 280,
+        detalhe: "Avaliação inicial, com duração maior, para planejar o trabalho." },
+      { id: "combinado", nome: "Sessão ou pacote combinado", valor: null,
+        detalhe: "Digite o valor que você combinou com a psicóloga." },
+    ],
+  },
+
   pagamentos: ["PIX", "Dinheiro", "Depósito Bancário", "Reembolso do plano de saúde (com recibo)"],
 
   // ---------------- CONSULTÓRIOS ----------------
