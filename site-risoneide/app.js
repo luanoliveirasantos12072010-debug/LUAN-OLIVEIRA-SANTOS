@@ -281,6 +281,9 @@
       esc(ped.mod === "Presencial" ? "Presencial — " + LOCAIS.end.local : "Teleconsulta (online)") + (ped.servico != null ? " · " + esc(D.servicos[ped.servico].nome) : "") +
       '</small></div><button class="link-btn link" id="ag-trocar">Trocar</button></div>';
   }
+  // Valor que pode ser pago por PIX: o do serviço escolhido ou, sem serviço, o da primeira consulta.
+  function valorPix() { return ped.servico != null ? D.servicos[ped.servico].valor || null : D.servicos[0].valor || null; }
+  function rotuloPix() { return ped.servico != null ? D.servicos[ped.servico].nome : D.servicos[0].nome; }
   function passoDados() {
     var h = resumoHorario() +
       '<form class="form" id="ag-form" novalidate>' +
@@ -289,8 +292,13 @@
       '<label for="ag-email">E-mail <em>(opcional)</em></label><input type="email" id="ag-email" autocomplete="email" value="' + esc(ped.email || "") + '">' +
       '<label class="check"><input type="checkbox" id="ag-ok"' + (ped.ok ? " checked" : "") + '> <span>Concordo com a <a href="#" data-acao="privacidade">política de privacidade</a>.</span></label>' +
       '<p class="form-erro" id="ag-erro" hidden></p>' +
-      '<button type="submit" class="btn btn-whats btn-largo">' + I.whats + "Confirmar agendamento</button></form>" +
-      '<p class="cal-rodape">Ao confirmar, abrimos o WhatsApp com seu pedido para ' + esc(D.primeiroNome) + " confirmar o horário.</p>";
+      '<p class="rotulo">Como você quer finalizar?</p>' +
+      (D.whatsapp ? '<button type="submit" class="opcao-pag" id="ag-whats"><span class="opcao-pag-icone whats">' + I.whats + "</span><span><strong>" +
+        (valorPix() ? "Confirmar e pagar pelo WhatsApp" : "Confirmar agendamento pelo WhatsApp") + "</strong><small>Abrimos o WhatsApp com seu pedido para " + esc(D.primeiroNome) +
+        " confirmar o horário" + (valorPix() ? " e combinar o pagamento." : ".") + "</small></span></button>" : "") +
+      (valorPix() ? '<button type="button" class="opcao-pag" id="ag-pix"><span class="opcao-pag-icone pix">' + I.pix + "</span><span><strong>Confirmar e pagar agora por PIX</strong>" +
+        "<small>" + esc(rotuloPix()) + " — " + esc(brl(valorPix())) + ". Gera o QR Code e o código copia e cola.</small></span></button>" : "") +
+      "</form>";
     abrirFolha("Confirme seus dados", h, function (c) {
       function guardar() {
         ped.nome = c.querySelector("#ag-nome").value.trim(); ped.tel = c.querySelector("#ag-tel").value.trim();
@@ -298,13 +306,21 @@
       }
       c.querySelector("#ag-trocar").onclick = function () { guardar(); agendar(ped.servico); };
       c.querySelector('[data-acao="privacidade"]').addEventListener("click", guardar);
-      c.querySelector("#ag-form").onsubmit = function (e) {
-        e.preventDefault(); guardar();
+      function valido() {
+        guardar();
         var falta = ped.nome.length < 2 ? "Escreva seu nome." : ped.tel.replace(/\D/g, "").length < 10 ? "Escreva seu WhatsApp com DDD." : !ped.ok ? "Marque que concorda com a política de privacidade." : "";
-        if (falta) { var er = c.querySelector("#ag-erro"); er.textContent = falta; er.hidden = false; return; }
+        var er = c.querySelector("#ag-erro");
+        if (falta) { er.textContent = falta; er.hidden = false; er.scrollIntoView({ block: "center", behavior: "smooth" }); return false; }
+        er.hidden = true; return true;
+      }
+      c.querySelector("#ag-form").onsubmit = function (e) {
+        e.preventDefault(); if (!valido()) return;
         window.open(linkWhats(mensagemAgendamento("Pode confirmar, por favor?")), "_blank", "noopener");
         passoEnviado();
       };
+      c.querySelectorAll("#ag-form input").forEach(function (el) { el.addEventListener("input", function () { c.querySelector("#ag-erro").hidden = true; }); el.addEventListener("change", function () { c.querySelector("#ag-erro").hidden = true; }); });
+      var bp = c.querySelector("#ag-pix");
+      if (bp) bp.onclick = function () { if (valido()) pagarPix(valorPix()); };
     });
   }
   function mensagemAgendamento(final) {
@@ -316,16 +332,16 @@
       "\n\n*Nome:* " + ped.nome + "\n*WhatsApp:* " + ped.tel + (ped.email ? "\n*E-mail:* " + ped.email : "") + "\n\n" + final;
   }
   function passoEnviado() {
-    var prim = D.servicos[0];
+    var vp = valorPix();
     abrirFolha("Pedido enviado!",
       '<div class="ag-ok-icone">' + I.check + "</div>" + resumoHorario().replace('<button class="link-btn link" id="ag-trocar">Trocar</button>', "") +
       "<p>Abrimos o WhatsApp com o seu pedido. <strong>É só enviar a mensagem</strong> — " + esc(D.primeiroNome) + " confirma o horário com você.</p>" +
       (D.whatsapp ? '<a class="btn btn-whats btn-largo" target="_blank" rel="noopener" href="' + linkWhats(mensagemAgendamento("Pode confirmar, por favor?")) + '">' + I.whats + "Abrir o WhatsApp de novo</a>" : "") +
-      (prim.valor ? '<div class="ag-pix-oferta"><p><strong>É a sua primeira consulta?</strong> Se quiser, você já pode pagar por PIX (' + esc(brl(prim.valor)) + ").</p>" +
-        '<button class="btn btn-bege btn-largo" id="ag-pix">' + I.pix + "Pagar primeira consulta por PIX</button></div>" : "") +
+      (vp ? '<div class="ag-pix-oferta"><p>Se quiser, você já pode pagar ' + esc(rotuloPix().toLowerCase()) + " por PIX (" + esc(brl(vp)) + ").</p>" +
+        '<button class="btn btn-bege btn-largo" id="ag-pix">' + I.pix + "Pagar agora por PIX</button></div>" : "") +
       '<button class="btn btn-verde btn-largo" id="ag-fechar">Fechar</button>',
       function (c) {
-        var px = c.querySelector("#ag-pix"); if (px) px.onclick = function () { pagarPix(prim.valor); };
+        var px = c.querySelector("#ag-pix"); if (px) px.onclick = function () { pagarPix(vp); };
         c.querySelector("#ag-fechar").onclick = fecharFolha;
       });
   }
@@ -342,21 +358,21 @@
   function pagarPix(valor) {
     var codigo = window.PIX.brCode({ chave: PX.chave, nome: PX.nome, cidade: PX.cidade, valor: valor });
     var qr = window.qrcode(0, "M"); qr.addData(codigo); qr.make();
-    var msgFinal = mensagemAgendamento("Fiz o pagamento da primeira consulta (" + brl(valor) + ") por PIX pelo site. Segue o comprovante:");
+    var msgFinal = mensagemAgendamento("Paguei a " + rotuloPix().toLowerCase() + " (" + brl(valor) + ") por PIX pelo site. Segue o comprovante:");
     abrirFolha("Pagar com PIX",
-      '<div class="pix-caixa"><p class="pix-valor-grande">' + esc(brl(valor)) + '</p><p class="cinza">Primeira consulta</p>' +
+      '<div class="pix-caixa"><p class="pix-valor-grande">' + esc(brl(valor)) + '</p><p class="cinza">' + esc(rotuloPix()) + " · " + esc(dataLonga(ped.dia)) + ", " + esc(ped.hora) + "</p>" +
       '<div class="pix-qr"><img alt="QR Code PIX de ' + esc(brl(valor)) + '" src="' + qr.createDataURL(6, 2) + '"></div>' +
       '<p class="pix-dados">Recebedor: <strong>' + esc(PX.nome) + "</strong><br>Chave PIX: " + esc(PX.chaveExibicao) + "</p>" +
       '<p style="margin:14px 0 6px;font-weight:500">PIX copia e cola</p><textarea class="pix-codigo" id="pix-codigo" rows="3" readonly>' + esc(codigo) + "</textarea>" +
       '<button class="btn btn-verde btn-largo" id="pix-copiar">Copiar código PIX</button>' +
       '<ol class="pix-passos"><li>Abra o app do seu banco e escolha <strong>Pix → Pagar com QR Code</strong> ou <strong>Pix copia e cola</strong>.</li>' +
-      "<li>Confira o nome do recebedor e o valor, e pague.</li><li>Toque no botão abaixo para enviar o comprovante no WhatsApp.</li></ol>" +
-      (D.whatsapp ? '<a class="btn btn-whats btn-largo" id="pix-enviar" target="_blank" rel="noopener" href="' + linkWhats(msgFinal) + '">' + I.whats + "Já paguei — enviar comprovante</a>" : "") +
+      "<li>Confira o nome do recebedor e o valor, e pague.</li><li>Toque no botão abaixo: ele envia seu agendamento e o comprovante no WhatsApp.</li></ol>" +
+      (D.whatsapp ? '<a class="btn btn-whats btn-largo" id="pix-enviar" target="_blank" rel="noopener" href="' + linkWhats(msgFinal) + '">' + I.whats + "Já paguei — enviar agendamento e comprovante</a>" : "") +
       '<button class="btn btn-bege btn-largo" id="pix-voltar">Voltar</button></div>',
       function (c) {
         c.querySelector("#pix-copiar").onclick = function () { copiar(codigo, "Código PIX copiado! Cole no app do seu banco."); };
         c.querySelector("#pix-codigo").onclick = function () { this.select(); };
-        c.querySelector("#pix-voltar").onclick = passoEnviado;
+        c.querySelector("#pix-voltar").onclick = passoDados;
         var env = c.querySelector("#pix-enviar");
         if (env) env.addEventListener("click", function () { setTimeout(function () { fecharFolha(); toast("Obrigado! Envie o comprovante na conversa do WhatsApp."); }, 300); });
       });
