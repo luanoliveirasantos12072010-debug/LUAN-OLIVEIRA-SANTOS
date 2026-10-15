@@ -219,15 +219,10 @@
   var TURNOS = ["Qualquer horário", "Manhã", "Tarde", "Noite"];
   function hojeISO() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
   function brl(v) { return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
-  function lerValor(txt) {
-    var n = Number(String(txt).replace(/[^\d,.-]/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", "."));
-    return isFinite(n) ? Math.round(n * 100) / 100 : NaN;
-  }
   function modalidadesDe(s) { return s.locais.map(function (c) { return c === "tele" ? "Teleconsulta" : "Presencial"; }); }
   function valorTexto() {
     var s = D.servicos[ped.servico];
-    if (s.valor) return brl(s.valor);
-    return ped.valorCombinado ? brl(ped.valorCombinado) + " (combinado)" : A_COMBINAR;
+    return s.valor ? brl(s.valor) : A_COMBINAR;
   }
   function etapas(n) {
     return '<ol class="etapas">' + ["Serviço", "Seus dados", "Pagamento"].map(function (t, i) {
@@ -254,7 +249,7 @@
     var s = D.servicos[i], mods = modalidadesDe(s);
     var anterior = ped || {};
     ped = { servico: i, modalidade: mods.indexOf(modalidade) !== -1 ? modalidade : mods[0], nome: anterior.nome || "", tel: anterior.tel || "",
-      email: anterior.email || "", dia: diaPreferido || anterior.dia || "", turno: anterior.turno || TURNOS[0], msg: "", valorCombinado: null };
+      email: anterior.email || "", dia: diaPreferido || anterior.dia || "", turno: anterior.turno || TURNOS[0], msg: "" };
     passo1();
   }
 
@@ -283,7 +278,9 @@
       '<div class="ck-como"><strong>Como funciona</strong><ol>' +
       "<li>Você preenche seus dados e escolhe como pagar.</li>" +
       "<li>Os dados chegam no WhatsApp de " + esc(D.primeiroNome) + ", que confirma com você o dia e o horário.</li>" +
-      "<li>O pagamento pode ser feito agora, por PIX aqui no site, ou combinado pelo WhatsApp. Você recebe recibo para pedir reembolso ao plano de saúde.</li></ol></div>" +
+      (D.servicos[ped.servico].valor
+        ? "<li>O pagamento pode ser feito agora, por PIX aqui no site, ou combinado pelo WhatsApp. Você recebe recibo para pedir reembolso ao plano de saúde.</li>"
+        : "<li>O valor deste serviço é combinado com a psicóloga pelo WhatsApp, junto com o horário. Você recebe recibo para pedir reembolso ao plano de saúde.</li>") + "</ol></div>" +
       '<form class="form" id="ck-form" novalidate>' +
       '<label for="ck-nome">Seu nome *</label><input type="text" id="ck-nome" autocomplete="name" value="' + esc(ped.nome) + '">' +
       '<div class="duas"><div><label for="ck-tel">WhatsApp *</label><input type="tel" id="ck-tel" autocomplete="tel" placeholder="(87) 99999-9999" value="' + esc(ped.tel) + '"></div>' +
@@ -322,34 +319,23 @@
       '<div class="ck-resumo">' + linhas.map(function (l) { return "<div><span>" + l[0] + "</span><b>" + esc(l[1]) + "</b></div>"; }).join("") +
       '<div class="ck-total"><span>Valor</span><b>' + (s.valor ? esc(brl(s.valor)) : A_COMBINAR) + "</b></div>" +
       (s.valor ? '<p class="ck-nota">' + esc(s.descricao || "") + "</p>" : '<p class="ck-nota">O valor deste serviço é combinado com a psicóloga pelo WhatsApp.</p>') + "</div>" +
-      '<p class="rotulo">Como você quer finalizar?</p>' +
-      (D.whatsapp ? '<button class="opcao-pag" id="ck-whats"><span class="opcao-pag-icone whats">' + I.whats + "</span><span><strong>Finalizar e pagar pelo WhatsApp</strong>" +
-        "<small>Envia seus dados para a " + esc(D.primeiroNome) + " e vocês combinam o horário e o pagamento por lá.</small></span></button>" : "") +
-      '<button class="opcao-pag" id="ck-pix"><span class="opcao-pag-icone pix">' + I.pix + "</span><span><strong>Pagar agora pelo site (PIX)</strong>" +
-      "<small>" + (s.valor ? "Gera o QR Code de " + esc(brl(s.valor)) + " para você pagar no app do seu banco." : "Se você já combinou o valor com a psicóloga, digite-o para gerar o QR Code.") + "</small></span></button>" +
-      (s.valor ? "" : '<div class="ck-combinado" id="ck-combinado" hidden><label for="ck-valor">Valor combinado (R$)</label><input type="text" id="ck-valor" inputmode="decimal" placeholder="Ex.: 200,00">' +
-        '<p class="form-erro" id="ck-verro" hidden></p><button class="btn btn-verde btn-largo" id="ck-gerar">Gerar QR Code PIX</button></div>') +
+      (s.valor ? '<p class="rotulo">Como você quer finalizar?</p>' : "") +
+      (D.whatsapp ? '<button class="opcao-pag" id="ck-whats"><span class="opcao-pag-icone whats">' + I.whats + "</span><span><strong>" +
+        (s.valor ? "Finalizar e pagar pelo WhatsApp" : "Combinar o valor e agendar pelo WhatsApp") + "</strong>" +
+        "<small>Envia seus dados para a " + esc(D.primeiroNome) + " e vocês combinam " + (s.valor ? "o horário e o pagamento" : "o valor e o horário") + " por lá.</small></span></button>" : "") +
+      (s.valor ? '<button class="opcao-pag" id="ck-pix"><span class="opcao-pag-icone pix">' + I.pix + "</span><span><strong>Pagar agora pelo site (PIX)</strong>" +
+        "<small>Gera o QR Code de " + esc(brl(s.valor)) + " para você pagar no app do seu banco.</small></span></button>" : "") +
       '<button class="btn btn-bege btn-largo" id="ck-voltar">Voltar</button>';
     abrirFolha("Resumo e pagamento", h, function (c) {
       c.querySelector("#ck-voltar").onclick = passo2;
       var w = c.querySelector("#ck-whats");
       if (w) w.onclick = function () {
-        window.open(linkWhats(mensagemPedido("Gostaria de confirmar o horário e combinar o pagamento por aqui.")), "_blank", "noopener");
+        var fim = s.valor ? "Gostaria de confirmar o horário e combinar o pagamento por aqui." : "Gostaria de combinar o valor e o horário por aqui.";
+        window.open(linkWhats(mensagemPedido(fim)), "_blank", "noopener");
         fecharFolha(); toast("Abrimos o WhatsApp com seus dados. É só enviar a mensagem!");
       };
-      c.querySelector("#ck-pix").onclick = function () {
-        if (s.valor) { ped.valorCombinado = null; passo4(s.valor); return; }
-        var box = c.querySelector("#ck-combinado"); box.hidden = false; c.querySelector("#ck-valor").focus();
-      };
-      var g = c.querySelector("#ck-gerar");
-      if (g) {
-        g.onclick = function () {
-          var v = lerValor(c.querySelector("#ck-valor").value), er = c.querySelector("#ck-verro");
-          if (!(v >= 1 && v <= 50000)) { er.textContent = "Digite o valor combinado, por exemplo 200,00."; er.hidden = false; return; }
-          ped.valorCombinado = v; passo4(v);
-        };
-        c.querySelector("#ck-valor").onkeydown = function (e) { if (e.key === "Enter") g.click(); };
-      }
+      var px = c.querySelector("#ck-pix");
+      if (px) px.onclick = function () { passo4(s.valor); };
     });
   }
 
@@ -537,7 +523,7 @@
     ["Quais são as principais especialidades de " + N + "?", esc(N) + " é psicóloga, formada pela UNICAP e especialista em psicologia clínica, saúde mental e organizacional, com mais de 30 anos de experiência. Trabalha com " + esc(D.experienciaEm.join(", ").toLowerCase()) + "."],
     ["Onde fica o consultório de " + N + "?", esc(N) + " atende em:<ul><li>" + esc(LOCAIS.end.titulo) + " — " + esc(LOCAIS.end.local) + "</li><li>Teleconsulta (online)</li></ul>"],
     ["Posso ser atendido online, sem ter que ir até o consultório?", "Sim. " + esc(N) + " atende por teleconsulta, por chamada de vídeo. <button class=\"link-btn link-verde\" data-acao=\"solicitar\" data-modalidade=\"Teleconsulta\">Agendar teleconsulta</button>"],
-    ["Quais métodos de pagamento são aceitos?", esc(D.pagamentos.join(", ")) + ". Ao agendar um serviço aqui no site, você pode pagar na hora por PIX (QR Code ou copia e cola) ou combinar o pagamento pelo WhatsApp."],
+    ["Quais métodos de pagamento são aceitos?", esc(D.pagamentos.join(", ")) + ". A primeira consulta pode ser paga na hora por PIX aqui no site, ao agendar (QR Code ou copia e cola). Os demais valores são combinados pelo WhatsApp."],
     ["Em quais idiomas " + N + " atende?", esc(N) + " atende em " + esc(D.idiomas.join(", ")) + "."],
     ["Como posso marcar uma consulta?", "Pelo WhatsApp " + esc(D.telefone) + " (<a class=\"link-verde\" target=\"_blank\" rel=\"noopener\" href=\"" + linkWhats(MSG_PADRAO) + "\">clique aqui para chamar</a>) ou tocando em <button class=\"link-btn link-verde\" data-acao=\"solicitar\">Agendar consulta</button> e escolhendo o dia de sua preferência."],
     ["O que outros pacientes dizem sobre " + N + "?", '<span id="faq-media"></span>'],

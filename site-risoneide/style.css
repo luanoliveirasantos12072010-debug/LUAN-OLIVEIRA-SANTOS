@@ -419,9 +419,6 @@ ul { margin: 0; padding: 0; list-style: none; }
 .opcao-pag-icone svg { width: 24px; height: 24px; }
 .opcao-pag-icone.whats { background: #25d366; }
 .opcao-pag-icone.pix { background: #32bcad; }
-.ck-combinado { background: var(--fundo); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; }
-.ck-combinado label { display: block; font-weight: 500; margin-bottom: 6px; }
-.ck-combinado input { width: 100%; border: 1px solid #ddd3c8; border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 18px; }
 
 /* ---------- DÚVIDAS: ESCOLHA + CHAT ---------- */
 .duvida-flutuante {
